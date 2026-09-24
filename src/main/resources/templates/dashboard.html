@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Principal - ServiUVG</title>
+</head>
+<body>
+    <h1>Bienvenido al Sistema ServiUVG</h1>
+    <p>Has iniciado sesión exitosamente.</p>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+</body>
+</html>

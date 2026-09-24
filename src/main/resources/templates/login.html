@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - ServiUVG</title>
+</head>
+<body>
+    <h2>Iniciar Sesión</h2>
+
+    <div th:if="${param.error}" style="color: red;">
+        Usuario o contraseña incorrectos. Por favor, inténtalo de nuevo
+    </div>
+    <div th:if="${param.logout}" style="color: green;">
+        Se ha cerrado sesión correctamente
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div>
+            <label>Usuario:</label><br>
+            <input type="text" name="username" required autofocus />
+        </div>
+        <br>
+        <div>
+            <label>Contraseña:</label><br>
+            <input type="password" name="password" required />
+        </div>
+        <br>
+        <button type="submit">Ingresar</button>
+    </form>
+</body>
+</html>
