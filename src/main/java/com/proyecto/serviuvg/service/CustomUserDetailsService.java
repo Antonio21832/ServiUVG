@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
+//Tiene la interfaz de Spring Security que ayuda a buscar el usuario en la base de datos usando UsuarioRepository
+//Sprong Security necesita verificar que el usuario existe y la constraseña es correcta
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

@@ -3,6 +3,7 @@ package com.proyecto.serviuvg.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+//Se encarga de las solicitudes de inicio de sesión y redirección al dashboard
 @Controller
 public class LoginController {
 

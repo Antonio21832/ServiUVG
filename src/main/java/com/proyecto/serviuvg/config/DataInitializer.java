@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+// Cuando se inicia la aplicación verifica que exista un usuario, si no crea el ejemplo
 @Configuration
 public class DataInitializer {
 

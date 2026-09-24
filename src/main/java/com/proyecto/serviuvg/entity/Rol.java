@@ -1,7 +1,7 @@
 package com.proyecto.serviuvg.entity;
 
 import jakarta.persistence.*;
-
+//Ayuda a estrucutar la base de datos, definiendo los roles que existen en el sistema, como "ADMIN" y "USER". Esto permite asignar permisos y controlar el acceso a diferentes funcionalidades de la aplicación según el rol del usuario
 @Entity
 @Table(name = "roles")
 public class Rol {
