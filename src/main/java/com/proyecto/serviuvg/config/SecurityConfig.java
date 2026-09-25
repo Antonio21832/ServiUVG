@@ -11,7 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 //Permite que se pueda acceder a ingresar sesión y registro, pero no a las demás pestañas
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig {   
 
     @Bean
     public PasswordEncoder passwordEncoder() {
