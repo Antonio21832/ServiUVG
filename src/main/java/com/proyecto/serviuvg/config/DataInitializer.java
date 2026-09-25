@@ -9,14 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-// Cuando se inicia la aplicación verifica que exista un usuario, si no crea el ejemplo
+// Cuando se inicia la aplicación verifica que exista el usuario, si no crea el ejemplo
 @Configuration
 public class DataInitializer {
 
     @Bean
     CommandLineRunner initDatabase(UsuarioRepository usuarioRepo, RolRepository rolRepo, PasswordEncoder encoder) {
         return args -> {
-            if (usuarioRepo.findByNombre("estudiante").isEmpty()) {
+            // CORRECCIÓN: Ahora busca si existe "Alejandro" en lugar de "estudiante"
+            if (usuarioRepo.findByNombre("Alejandro").isEmpty()) {
                 Rol rolEstudiante = rolRepo.findByNombre("ROLE_USUARIO")
                         .orElseGet(() -> rolRepo.save(new Rol("ROLE_USUARIO")));
 

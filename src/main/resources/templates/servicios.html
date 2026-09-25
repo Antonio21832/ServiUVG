@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,7 @@
             --verde-oscuro: #103c2d;
             --crema: #f7f8f2;
             --lima: #d5ef91;
-            --texto: #203c30;
+            --texto: #3c203c;
             --gris: #647368;
         }
 
@@ -724,31 +724,16 @@
 <body>
     <header class="encabezado">
         <div class="barra-superior">
-            <a
-                class="logo"
-                href="index.html"
-                aria-label="ServiUVG: inicio"
-            >
+            <a class="logo" href="/" aria-label="ServiUVG: inicio">
                 S.
             </a>
 
-            <a class="nombre-sitio" href="index.html">
+            <a class="nombre-sitio" href="/">
                 Servi<span>UVG</span>
             </a>
 
-            <a
-                class="perfil"
-                href="perfil.html"
-                aria-label="Mi perfil"
-            >
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7"
-                    stroke-linecap="round"
-                    aria-hidden="true"
-                >
+            <a class="perfil" href="/perfil" aria-label="Mi perfil">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
                     <circle cx="12" cy="8" r="4"></circle>
                     <path d="M4 21v-2a8 8 0 0 1 16 0v2"></path>
                 </svg>
@@ -756,10 +741,10 @@
         </div>
 
         <nav class="navegacion" aria-label="Navegación principal">
-            <a href="index.html">Inicio</a>
-            <a href="servicios.html" aria-current="page">Servicios</a>
-            <a href="publicar.html">Publicar servicios</a>
-            <a href="contacto.html">Contáctanos</a>
+            <a href="/">Inicio</a>
+            <a href="/servicios" aria-current="page">Servicios</a>
+            <a href="/publicar">Publicar servicios</a>
+            <a href="/contacto">Contáctanos</a>
         </nav>
     </header>
 
@@ -779,108 +764,39 @@
             <div class="filtros">
                 <div>
                     <label for="busqueda">¿Qué necesitás?</label>
-                    <input
-                        type="search"
-                        id="busqueda"
-                        placeholder="Buscá Java, matemática, diseño..."
-                    >
+                    <input type="search" id="busqueda" placeholder="Buscá Java, matemática, diseño...">
                 </div>
 
                 <div>
                     <label for="orden">Ordenar por</label>
                     <select id="orden">
-                        <option value="original">
-                            Orden predeterminado
-                        </option>
-                        <option value="menor">
-                            Precio: menor a mayor
-                        </option>
-                        <option value="mayor">
-                            Precio: mayor a menor
-                        </option>
+                        <option value="original">Orden predeterminado</option>
+                        <option value="menor">Precio: menor a mayor</option>
+                        <option value="mayor">Precio: mayor a menor</option>
                     </select>
                 </div>
             </div>
 
-            <div
-                class="categorias"
-                role="group"
-                aria-label="Categorías"
-            >
-                <button
-                    type="button"
-                    class="categoria-boton"
-                    data-categoria="todos"
-                    aria-pressed="true"
-                >
-                    Todos
-                </button>
-
-                <button
-                    type="button"
-                    class="categoria-boton"
-                    data-categoria="tutorias"
-                    aria-pressed="false"
-                >
-                    Tutorías
-                </button>
-
-                <button
-                    type="button"
-                    class="categoria-boton"
-                    data-categoria="diseno"
-                    aria-pressed="false"
-                >
-                    Diseño
-                </button>
-
-                <button
-                    type="button"
-                    class="categoria-boton"
-                    data-categoria="programacion"
-                    aria-pressed="false"
-                >
-                    Programación
-                </button>
-
-                <button
-                    type="button"
-                    class="categoria-boton"
-                    data-categoria="otros"
-                    aria-pressed="false"
-                >
-                    Otros
-                </button>
+            <div class="categorias" role="group" aria-label="Categorías">
+                <button type="button" class="categoria-boton" data-categoria="todos" aria-pressed="true">Todos</button>
+                <button type="button" class="categoria-boton" data-categoria="tutorias" aria-pressed="false">Tutorías</button>
+                <button type="button" class="categoria-boton" data-categoria="diseno" aria-pressed="false">Diseño</button>
+                <button type="button" class="categoria-boton" data-categoria="programacion" aria-pressed="false">Programación</button>
+                <button type="button" class="categoria-boton" data-categoria="otros" aria-pressed="false">Otros</button>
             </div>
         </section>
 
         <div class="informacion-resultados">
-            <p
-                id="contador"
-                role="status"
-                aria-live="polite"
-            ></p>
-
-            <p>
-                Catálogo de ejemplo · Precios según la unidad indicada
-            </p>
+            <p id="contador" role="status" aria-live="polite"></p>
+            <p>Catálogo de ejemplo · Precios según la unidad indicada</p>
         </div>
 
-        <section
-            id="lista-servicios"
-            class="servicios"
-            aria-label="Servicios disponibles"
-        ></section>
+        <section id="lista-servicios" class="servicios" aria-label="Servicios disponibles"></section>
 
         <section id="sin-resultados" class="vacio" hidden>
             <h2>No encontramos coincidencias</h2>
-            <p>
-                Probá otra palabra o elegí una categoría diferente.
-            </p>
-
-            <button type="button" id="limpiar" class="boton">
-                Limpiar filtros
-            </button>
+            <p>Probá otra palabra o elegí una categoría diferente.</p>
+            <button type="button" id="limpiar" class="boton">Limpiar filtros</button>
         </section>
 
         <noscript>
@@ -889,188 +805,79 @@
     </main>
 
     <!-- VENTANA: VER MÁS -->
-
-    <dialog
-        id="detalle"
-        aria-labelledby="detalle-titulo"
-    >
+    <dialog id="detalle" aria-labelledby="detalle-titulo">
         <form method="dialog">
-            <button class="cerrar" autofocus>
-                Cerrar ✕
-            </button>
+            <button class="cerrar" autofocus>Cerrar ✕</button>
         </form>
-
         <h2 id="detalle-titulo"></h2>
         <p id="detalle-categoria" class="etiqueta"></p>
         <p id="detalle-descripcion" class="detalle-texto"></p>
         <p id="detalle-vendedor" class="detalle-texto"></p>
         <p id="detalle-precio" class="precio"></p>
-
-        <button
-            type="button"
-            id="reservar-desde-detalle"
-            class="boton boton-reservar reservar-detalle"
-        >
+        <button type="button" id="reservar-desde-detalle" class="boton boton-reservar reservar-detalle">
             Reservar este servicio
             <span class="flecha" aria-hidden="true">→</span>
         </button>
-
-        <p class="aviso">
-            Publicación de ejemplo. Las reservas todavía no están
-            habilitadas.
-        </p>
+        <p class="aviso">Publicación de ejemplo. Las reservas todavía no están habilitadas.</p>
     </dialog>
 
     <!-- VENTANA: RESERVAR -->
-
-    <dialog
-        id="reserva"
-        aria-labelledby="reserva-titulo"
-    >
+    <dialog id="reserva" aria-labelledby="reserva-titulo">
         <form method="dialog">
-            <button class="cerrar" autofocus>
-                Cerrar ✕
-            </button>
+            <button class="cerrar" autofocus>Cerrar ✕</button>
         </form>
-
         <h2 id="reserva-titulo">Reservar servicio</h2>
         <p id="reserva-servicio" class="detalle-texto"></p>
         <p id="reserva-precio" class="precio"></p>
-
         <h3>¿Cómo funcionará?</h3>
-
         <ol class="pasos-reserva">
             <li>Iniciá sesión con tu cuenta.</li>
             <li>Indicá qué necesitás y la fecha deseada.</li>
             <li>Enviá tu solicitud al proveedor.</li>
             <li>Esperá que el proveedor confirme su disponibilidad.</li>
         </ol>
-
-        <p class="aviso">
-            Esta es una demostración. Todavía no se envían solicitudes,
-            no se guardan reservas y no se realizan cobros.
-        </p>
+        <p class="aviso">Esta es una demostración. Todavía no se envían solicitudes, no se guardan reservas y no se realizan cobros.</p>
     </dialog>
 
     <!-- FOOTER -->
-
     <footer>
         <div class="contenido-footer">
             <div>
                 <p class="marca-footer">ServiUVG</p>
-
-                <p class="detalle-footer">
-                    Proyecto académico · Programación Orientada a Objetos
-                </p>
+                <p class="detalle-footer">Proyecto académico · Programación Orientada a Objetos</p>
             </div>
-
             <div class="equipo">
                 <strong>Desarrollado por</strong>
-
-                <p class="detalle-footer">
-                    Antonio Molina · Alejandro López · Erwin Tomás
-                </p>
+                <p class="detalle-footer">Antonio Molina · Alejandro López · Erwin Tomás</p>
             </div>
         </div>
     </footer>
 
-    <script>
+    <script th:inline="javascript">
         /*
-         * DATOS DE EJEMPLO
-         * Más adelante esta lista se obtendrá desde Java.
+         * DATOS REALES DESDE LA BASE DE DATOS
+         * Thymeleaf inyectará la lista de Java aquí automáticamente
          */
-        const servicios = [
-            {
-                id: 1,
-                titulo: "Tutoría de matemática",
-                categoria: "tutorias",
-                descripcion:
-                    "Reforzá álgebra y cálculo con explicaciones paso a paso y ejercicios guiados.",
-                detalle:
-                    "Sesión individual para repasar álgebra, funciones o cálculo. Compartí los temas que querés practicar para preparar ejercicios acordes a tus dudas.",
-                vendedor: "Ana López",
-                precio: 50,
-                unidad: "por hora"
-            },
-            {
-                id: 2,
-                titulo: "Diseño de logotipos",
-                categoria: "diseno",
-                descripcion:
-                    "Dale identidad a tu emprendimiento con un logotipo y una propuesta de colores.",
-                detalle:
-                    "Diseño de un logotipo para tu emprendimiento. Incluye una propuesta inicial, una ronda de ajustes y entrega del diseño en PNG y PDF.",
-                vendedor: "Carlos Pérez",
-                precio: 150,
-                unidad: "por proyecto"
-            },
-            {
-                id: 3,
-                titulo: "Tutoría de Java",
-                categoria: "tutorias",
-                descripcion:
-                    "Entendé clases, objetos, métodos y encapsulamiento con ejercicios prácticos.",
-                detalle:
-                    "Sesión de acompañamiento para comprender programación orientada a objetos en Java. Trabajaremos con ejemplos y ejercicios para que desarrollés tus propias soluciones.",
-                vendedor: "Sofía García",
-                precio: 60,
-                unidad: "por hora"
-            },
-            {
-                id: 4,
-                titulo: "Página web para tu emprendimiento",
-                categoria: "programacion",
-                descripcion:
-                    "Una página informativa adaptable a celulares para presentar tu negocio.",
-                detalle:
-                    "Creación de una página informativa con presentación del negocio, servicios y datos de contacto. Incluye diseño adaptable a celulares. No incluye dominio, alojamiento ni tienda en línea.",
-                vendedor: "Diego Ramírez",
-                precio: 350,
-                unidad: "por proyecto"
-            },
-            {
-                id: 5,
-                titulo: "Diseño de presentaciones",
-                categoria: "diseno",
-                descripcion:
-                    "Organización visual de tu contenido en una presentación de hasta diez diapositivas.",
-                detalle:
-                    "Diseño de hasta diez diapositivas usando el contenido que proporcionés. Incluye organización visual, tipografía y colores. Entrega en formato editable y PDF.",
-                vendedor: "Valeria Díaz",
-                precio: 90,
-                unidad: "por presentación"
-            },
-            {
-                id: 6,
-                titulo: "Edición de video",
-                categoria: "otros",
-                descripcion:
-                    "Edición de un video de hasta un minuto con cortes, títulos y transiciones.",
-                detalle:
-                    "Edición de un video de hasta un minuto a partir de tus grabaciones. Incluye selección de tomas, cortes, títulos y transiciones sencillas, con una ronda de ajustes.",
-                vendedor: "Pablo Morales",
-                precio: 120,
-                unidad: "por video"
-            }
-        ];
+        const serviciosDesdeJava = /*[[${serviciosBD}]]*/ [];
+
+        // Adaptamos los datos al formato exacto que usan los filtros de Antonio
+        const servicios = serviciosDesdeJava.map(s => ({
+            id: s.id,
+            titulo: s.titulo,
+            categoria: s.categoria,
+            descripcion: s.descripcion,
+            detalle: s.detalle,
+            precio: s.precio,
+            unidad: s.unidad,
+            // Como Erwin apenas hará el registro de usuarios, por ahora ponemos esto:
+            vendedor: "Estudiante UVG" 
+        }));
 
         const categorias = {
-            tutorias: {
-                nombre: "Tutorías",
-                simbolo: "Aa"
-            },
-            diseno: {
-                nombre: "Diseño",
-                simbolo: "✦"
-            },
-            programacion: {
-                nombre: "Programación",
-                simbolo: "</>"
-            },
-            otros: {
-                nombre: "Otros",
-                simbolo: "＋"
-            }
+            tutorias: { nombre: "Tutorías", simbolo: "Aa" },
+            diseno: { nombre: "Diseño", simbolo: "✦" },
+            programacion: { nombre: "Programación", simbolo: "</>" },
+            otros: { nombre: "Otros", simbolo: "＋" }
         };
 
         const lista = document.getElementById("lista-servicios");
@@ -1078,224 +885,100 @@
         const orden = document.getElementById("orden");
         const contador = document.getElementById("contador");
         const sinResultados = document.getElementById("sin-resultados");
-
-        const botonesCategoria =
-            document.querySelectorAll(".categoria-boton");
-
+        const botonesCategoria = document.querySelectorAll(".categoria-boton");
         const detalle = document.getElementById("detalle");
         const ventanaReserva = document.getElementById("reserva");
 
         let servicioSeleccionado = null;
         let botonOrigen = null;
-
-        /*
-         * Reconoce el enlace del index:
-         * servicios.html?categoria=tutorias
-         */
         const parametros = new URLSearchParams(window.location.search);
         const categoriaURL = parametros.get("categoria");
-
-        let categoriaActual =
-            Object.hasOwn(categorias, categoriaURL)
-                ? categoriaURL
-                : "todos";
+        let categoriaActual = Object.hasOwn(categorias, categoriaURL) ? categoriaURL : "todos";
 
         function normalizar(texto) {
-            return texto
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "");
+            return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
 
         function precioFormateado(precio) {
             return "Q" + precio.toFixed(2);
         }
 
-        /*
-         * Insertamos el contenido como texto, no como HTML.
-         */
         function crearElemento(etiqueta, clase, texto) {
             const elemento = document.createElement(etiqueta);
-
-            if (clase) {
-                elemento.className = clase;
-            }
-
-            if (texto !== undefined) {
-                elemento.textContent = texto;
-            }
-
+            if (clase) elemento.className = clase;
+            if (texto !== undefined) elemento.textContent = texto;
             return elemento;
         }
 
         function mostrarDetalle(servicio, origen) {
             servicioSeleccionado = servicio;
             botonOrigen = origen;
-
-            document.getElementById("detalle-titulo").textContent =
-                servicio.titulo;
-
-            document.getElementById("detalle-categoria").textContent =
-                categorias[servicio.categoria].nombre;
-
-            document.getElementById("detalle-descripcion").textContent =
-                servicio.detalle || servicio.descripcion;
-
-            document.getElementById("detalle-vendedor").textContent =
-                "Ofrecido por: " + servicio.vendedor +
-                " · Perfil de ejemplo";
-
-            document.getElementById("detalle-precio").textContent =
-                precioFormateado(servicio.precio) +
-                " " + servicio.unidad;
-
+            document.getElementById("detalle-titulo").textContent = servicio.titulo;
+            document.getElementById("detalle-categoria").textContent = categorias[servicio.categoria].nombre;
+            document.getElementById("detalle-descripcion").textContent = servicio.detalle || servicio.descripcion;
+            document.getElementById("detalle-vendedor").textContent = "Ofrecido por: " + servicio.vendedor + " · Perfil de ejemplo";
+            document.getElementById("detalle-precio").textContent = precioFormateado(servicio.precio) + " " + servicio.unidad;
             detalle.showModal();
         }
 
         function abrirReserva(servicio, origen) {
             if (!servicio) return;
-
-            if (origen) {
-                botonOrigen = origen;
-            }
-
-            if (detalle.open) {
-                detalle.close();
-            }
-
-            document.getElementById("reserva-servicio").textContent =
-                servicio.titulo +
-                " · Ofrecido por " + servicio.vendedor;
-
-            document.getElementById("reserva-precio").textContent =
-                precioFormateado(servicio.precio) +
-                " " + servicio.unidad;
-
+            if (origen) botonOrigen = origen;
+            if (detalle.open) detalle.close();
+            document.getElementById("reserva-servicio").textContent = servicio.titulo + " · Ofrecido por " + servicio.vendedor;
+            document.getElementById("reserva-precio").textContent = precioFormateado(servicio.precio) + " " + servicio.unidad;
             ventanaReserva.showModal();
         }
 
-        /*
-         * Al cerrar una ventana devolvemos el foco al botón
-         * de la tarjeta, salvo que haya otra ventana abierta.
-         */
         function restaurarFoco() {
-            if (!detalle.open && !ventanaReserva.open) {
-                if (botonOrigen && botonOrigen.isConnected) {
-                    botonOrigen.focus();
-                }
+            if (!detalle.open && !ventanaReserva.open && botonOrigen && botonOrigen.isConnected) {
+                botonOrigen.focus();
             }
         }
 
         detalle.addEventListener("close", restaurarFoco);
         ventanaReserva.addEventListener("close", restaurarFoco);
 
-        document.getElementById("reservar-desde-detalle")
-            .addEventListener("click", () => {
-                abrirReserva(servicioSeleccionado);
-            });
+        document.getElementById("reservar-desde-detalle").addEventListener("click", () => {
+            abrirReserva(servicioSeleccionado);
+        });
 
         function crearTarjeta(servicio, indice, animar) {
             const categoria = categorias[servicio.categoria];
-
             const tarjeta = crearElemento("article", "tarjeta");
+            if (animar) tarjeta.style.animationDelay = (indice * 0.07) + "s";
+            else tarjeta.style.animation = "none";
 
-            if (animar) {
-                tarjeta.style.animationDelay = (indice * 0.07) + "s";
-            } else {
-                // Evita repetir animaciones en cada tecla de búsqueda.
-                tarjeta.style.animation = "none";
-            }
-
-            const portada = crearElemento(
-                "div",
-                "tarjeta-portada " + servicio.categoria
-            );
-
-            const simbolo = crearElemento(
-                "span",
-                "simbolo",
-                categoria.simbolo
-            );
-
+            const portada = crearElemento("div", "tarjeta-portada " + servicio.categoria);
+            const simbolo = crearElemento("span", "simbolo", categoria.simbolo);
             simbolo.setAttribute("aria-hidden", "true");
-
-            const etiqueta = crearElemento(
-                "span",
-                "etiqueta-categoria",
-                categoria.nombre
-            );
-
+            const etiqueta = crearElemento("span", "etiqueta-categoria", categoria.nombre);
             portada.append(simbolo, etiqueta);
 
-            const contenido = crearElemento(
-                "div",
-                "tarjeta-contenido"
-            );
-
+            const contenido = crearElemento("div", "tarjeta-contenido");
             contenido.append(
                 crearElemento("h2", "", servicio.titulo),
                 crearElemento("p", "resumen", servicio.descripcion),
-                crearElemento(
-                    "p",
-                    "vendedor",
-                    "Por " + servicio.vendedor
-                )
+                crearElemento("p", "vendedor", "Por " + servicio.vendedor)
             );
 
             const pie = crearElemento("div", "tarjeta-pie");
+            const precio = crearElemento("p", "precio", precioFormateado(servicio.precio));
+            precio.append(crearElemento("span", "unidad", servicio.unidad));
 
-            const precio = crearElemento(
-                "p",
-                "precio",
-                precioFormateado(servicio.precio)
-            );
-
-            precio.append(
-                crearElemento("span", "unidad", servicio.unidad)
-            );
-
-            const acciones = crearElemento(
-                "div",
-                "acciones-servicio"
-            );
-
-            const botonDetalles = crearElemento(
-                "button",
-                "boton boton-detalles",
-                "Ver más"
-            );
-
+            const acciones = crearElemento("div", "acciones-servicio");
+            const botonDetalles = crearElemento("button", "boton boton-detalles", "Ver más");
             botonDetalles.type = "button";
+            botonDetalles.setAttribute("aria-label", "Ver más sobre " + servicio.titulo);
+            botonDetalles.addEventListener("click", () => mostrarDetalle(servicio, botonDetalles));
 
-            botonDetalles.setAttribute(
-                "aria-label",
-                "Ver más sobre " + servicio.titulo
-            );
-
-            botonDetalles.addEventListener("click", () => {
-                mostrarDetalle(servicio, botonDetalles);
-            });
-
-            const botonReservar = crearElemento(
-                "button",
-                "boton boton-reservar",
-                "Reservar"
-            );
-
+            const botonReservar = crearElemento("button", "boton boton-reservar", "Reservar");
             botonReservar.type = "button";
-
-            botonReservar.setAttribute(
-                "aria-label",
-                "Reservar " + servicio.titulo
-            );
-
+            botonReservar.setAttribute("aria-label", "Reservar " + servicio.titulo);
             const flecha = crearElemento("span", "flecha", "→");
             flecha.setAttribute("aria-hidden", "true");
             botonReservar.append(flecha);
-
-            botonReservar.addEventListener("click", () => {
-                abrirReserva(servicio, botonReservar);
-            });
+            botonReservar.addEventListener("click", () => abrirReserva(servicio, botonReservar));
 
             acciones.append(botonDetalles, botonReservar);
             pie.append(precio, acciones);
@@ -1307,60 +990,28 @@
 
         function mostrarServicios(animar = false) {
             const texto = normalizar(buscador.value.trim());
-
             const resultados = servicios.filter(servicio => {
-                const coincideCategoria =
-                    categoriaActual === "todos" ||
-                    servicio.categoria === categoriaActual;
-
-                const contenido = normalizar(
-                    servicio.titulo + " " +
-                    servicio.descripcion + " " +
-                    servicio.vendedor + " " +
-                    categorias[servicio.categoria].nombre
-                );
-
+                const coincideCategoria = categoriaActual === "todos" || servicio.categoria === categoriaActual;
+                const contenido = normalizar(servicio.titulo + " " + servicio.descripcion + " " + servicio.vendedor + " " + categorias[servicio.categoria].nombre);
                 return coincideCategoria && contenido.includes(texto);
             });
 
-            if (orden.value === "menor") {
-                resultados.sort((a, b) => a.precio - b.precio);
-            } else if (orden.value === "mayor") {
-                resultados.sort((a, b) => b.precio - a.precio);
-            }
+            if (orden.value === "menor") resultados.sort((a, b) => a.precio - b.precio);
+            else if (orden.value === "mayor") resultados.sort((a, b) => b.precio - a.precio);
 
             lista.replaceChildren();
+            resultados.forEach((servicio, indice) => lista.append(crearTarjeta(servicio, indice, animar)));
 
-            resultados.forEach((servicio, indice) => {
-                lista.append(
-                    crearTarjeta(servicio, indice, animar)
-                );
-            });
-
-            contador.textContent =
-                resultados.length === 1
-                    ? "1 servicio encontrado"
-                    : resultados.length + " servicios encontrados";
-
+            contador.textContent = resultados.length === 1 ? "1 servicio encontrado" : resultados.length + " servicios encontrados";
             sinResultados.hidden = resultados.length > 0;
 
             botonesCategoria.forEach(boton => {
-                boton.setAttribute(
-                    "aria-pressed",
-                    String(
-                        boton.dataset.categoria === categoriaActual
-                    )
-                );
+                boton.setAttribute("aria-pressed", String(boton.dataset.categoria === categoriaActual));
             });
         }
 
-        buscador.addEventListener("input", () => {
-            mostrarServicios();
-        });
-
-        orden.addEventListener("change", () => {
-            mostrarServicios();
-        });
+        buscador.addEventListener("input", () => mostrarServicios());
+        orden.addEventListener("change", () => mostrarServicios());
 
         botonesCategoria.forEach(boton => {
             boton.addEventListener("click", () => {
@@ -1369,15 +1020,13 @@
             });
         });
 
-        document.getElementById("limpiar")
-            .addEventListener("click", () => {
-                buscador.value = "";
-                orden.value = "original";
-                categoriaActual = "todos";
-
-                mostrarServicios(true);
-                buscador.focus();
-            });
+        document.getElementById("limpiar").addEventListener("click", () => {
+            buscador.value = "";
+            orden.value = "original";
+            categoriaActual = "todos";
+            mostrarServicios(true);
+            buscador.focus();
+        });
 
         mostrarServicios(true);
     </script>
