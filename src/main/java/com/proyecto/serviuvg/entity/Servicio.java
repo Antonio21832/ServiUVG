@@ -28,11 +28,16 @@ public class Servicio {
     @Column(nullable = false)
     private String unidad;
 
-    // Constructor vacío exigido por JPA
+    @Column(length = 120)
+    private String contactoProveedor;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
     public Servicio() {
     }
 
-    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -53,4 +58,10 @@ public class Servicio {
 
     public String getUnidad() { return unidad; }
     public void setUnidad(String unidad) { this.unidad = unidad; }
+
+    public String getContactoProveedor() { return contactoProveedor; }
+    public void setContactoProveedor(String contactoProveedor) { this.contactoProveedor = contactoProveedor; }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 }
