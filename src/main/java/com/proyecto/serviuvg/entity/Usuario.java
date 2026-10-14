@@ -1,5 +1,4 @@
 package com.proyecto.serviuvg.entity;
-
 import jakarta.persistence.*;
 //Es la tabla de usuarios, donde se guardan los datos de los usuarios que se registran en el sistema
 //Tiene todos los atributos del usuario, como nombre, contraseña y rol. Esto permite identificar a cada usuario de manera única y asociarlo con un rol específico para controlar el acceso a las funcionalidades del sistema

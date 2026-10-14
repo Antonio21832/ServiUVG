@@ -13,7 +13,6 @@ import java.util.List;
 @Controller
 public class PaginasController {
 
-    // Inyectamos el repositorio para poder leer la base de datos
     @Autowired
     private ServicioRepository servicioRepository;
 
@@ -29,10 +28,8 @@ public class PaginasController {
 
     @GetMapping("/servicios")
     public String mostrarServicios(Model model) {
-        // 1. Buscamos todos los servicios en MySQL
         List<Servicio> listaServicios = servicioRepository.findAll();
         
-        // 2. Se los pasamos al HTML bajo el nombre "serviciosBD"
         model.addAttribute("serviciosBD", listaServicios);
         
         return "servicios";
@@ -45,11 +42,9 @@ public class PaginasController {
 
     @GetMapping("/perfil")
     public String mostrarPerfil(Model model, Principal principal) {
-        // Captura el nombre del usuario autenticado por Spring Security
         String nombreUsuario = (principal != null) ? principal.getName() : "Estudiante";
         model.addAttribute("usuario", nombreUsuario);
         
-        // Envía la lista de servicios a la vista para gestionarlos
         model.addAttribute("misServicios", servicioRepository.findAll());
         
         return "perfil";

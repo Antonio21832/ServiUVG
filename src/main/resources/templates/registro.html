@@ -93,7 +93,6 @@
             border-bottom-color: var(--verde);
         }
 
-        /* FORMULARIO REGISTRO */
         main {
             max-width: 450px;
             margin: 60px auto;
@@ -191,6 +190,10 @@
 
     <main>
         <h2>Crear Cuenta</h2>
+        
+        <div th:if="${param.error}" style="background-color: #fdeaea; color: #e74c3c; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+            El usuario ya existe. Por favor, elige otro nombre
+        </div>
 
         <form th:action="@{/registro}" th:object="${usuario}" method="post">
             <div class="grupo-formulario">

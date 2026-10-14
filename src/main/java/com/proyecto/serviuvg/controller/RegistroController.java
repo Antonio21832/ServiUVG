@@ -31,7 +31,7 @@ public class RegistroController {
         boolean registrado = usuarioService.registrarUsuario(usuario);
  
         if (!registrado) {
-            return "redirect:/registro?error";
+            return "redirect:/registro?error=existe";
         }
         return "redirect:/login?exito";
     }
