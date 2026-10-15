@@ -33,10 +33,7 @@ public class PaginasController {
         return "index";
     }
 
-    @GetMapping("/contacto")
-    public String mostrarContacto() {
-        return "contacto";
-    }
+
 
     @GetMapping("/servicios")
     public String mostrarServicios(Model model) {
