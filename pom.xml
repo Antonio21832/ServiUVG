@@ -30,6 +30,16 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
+	<!-- Validación de los campos del formulario de contacto -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<!-- Envío de consultas y copias por correo electrónico -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>

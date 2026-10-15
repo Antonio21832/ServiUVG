@@ -40,3 +40,6 @@ build/
 .vscode/
 *.class
 *.jar
+
+# Credenciales locales del correo
+src/main/resources/contacto-local.properties
