@@ -33,7 +33,8 @@
 
         button,
         input,
-        select {
+        select,
+        textarea {
             font: inherit;
         }
 
@@ -223,7 +224,8 @@
         }
 
         input,
-        select {
+        select,
+        textarea {
             width: 100%;
             min-height: 46px;
             padding: 11px 13px;
@@ -236,10 +238,17 @@
                 box-shadow 0.2s;
         }
 
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
         input:focus,
-        select:focus {
+        select:focus,
+        textarea:focus {
             border-color: #578042;
             box-shadow: 0 0 0 3px #d5ef9140;
+            outline: none;
         }
 
         .categorias {
@@ -477,7 +486,7 @@
 
         .reservar-detalle {
             width: 100%;
-            margin-top: 22px;
+            margin-top: 18px;
         }
 
         /* SIN RESULTADOS */
@@ -501,8 +510,8 @@
         /* VENTANAS DE DETALLES Y RESERVA */
 
         dialog {
-            width: min(510px, calc(100% - 32px));
-            max-height: 85vh;
+            width: min(540px, calc(100% - 32px));
+            max-height: 88vh;
             overflow-y: auto;
             padding: 30px;
             border: 0;
@@ -537,34 +546,29 @@
         }
 
         dialog h2 {
-            margin: 20px 0 12px;
-            font-size: 26px;
+            margin: 16px 0 8px;
+            font-size: 25px;
             overflow-wrap: anywhere;
         }
 
         .detalle-texto {
             color: var(--gris);
-            line-height: 1.8;
+            line-height: 1.7;
+            margin: 8px 0;
+        }
+
+        .grupo-modal {
+            margin-top: 15px;
         }
 
         .aviso {
-            margin-top: 20px;
-            padding: 14px;
+            margin-top: 16px;
+            padding: 12px 14px;
             border-radius: 8px;
             background: #f0f4e9;
             font-size: 13px;
-            line-height: 1.7;
-        }
-
-        .pasos-reserva {
-            padding-left: 22px;
-            color: var(--gris);
-            font-size: 14px;
-            line-height: 1.8;
-        }
-
-        .pasos-reserva li {
-            margin-bottom: 9px;
+            line-height: 1.6;
+            color: var(--verde-oscuro);
         }
 
         /* FOOTER: MISMO DISEÑO DEL INDEX */
@@ -788,7 +792,7 @@
 
         <div class="informacion-resultados">
             <p id="contador" role="status" aria-live="polite"></p>
-            <p>Catálogo de ejemplo · Precios según la unidad indicada</p>
+            <p>Catálogo activo · Precios según la unidad indicada</p>
         </div>
 
         <section id="lista-servicios" class="servicios" aria-label="Servicios disponibles"></section>
@@ -813,30 +817,58 @@
         <p id="detalle-categoria" class="etiqueta"></p>
         <p id="detalle-descripcion" class="detalle-texto"></p>
         <p id="detalle-vendedor" class="detalle-texto"></p>
+        <p id="detalle-contacto" class="detalle-texto"></p>
         <p id="detalle-precio" class="precio"></p>
         <button type="button" id="reservar-desde-detalle" class="boton boton-reservar reservar-detalle">
-            Reservar este servicio
+            Contratar este servicio
             <span class="flecha" aria-hidden="true">→</span>
         </button>
-        <p class="aviso">Publicación de ejemplo. Las reservas todavía no están habilitadas.</p>
     </dialog>
 
-    <!-- VENTANA: RESERVAR -->
+    <!-- VENTANA: CONTRATAR / RESERVAR SERVICIO (CONECTADA A BASE DE DATOS) -->
     <dialog id="reserva" aria-labelledby="reserva-titulo">
         <form method="dialog">
             <button class="cerrar" autofocus>Cerrar ✕</button>
         </form>
-        <h2 id="reserva-titulo">Reservar servicio</h2>
+        <h2 id="reserva-titulo">Contratar servicio</h2>
         <p id="reserva-servicio" class="detalle-texto"></p>
         <p id="reserva-precio" class="precio"></p>
-        <h3>¿Cómo funcionará?</h3>
-        <ol class="pasos-reserva">
-            <li>Iniciá sesión con tu cuenta.</li>
-            <li>Indicá qué necesitás y la fecha deseada.</li>
-            <li>Enviá tu solicitud al proveedor.</li>
-            <li>Esperá que el proveedor confirme su disponibilidad.</li>
-        </ol>
-        <p class="aviso">Esta es una demostración. Todavía no se envían solicitudes, no se guardan reservas y no se realizan cobros.</p>
+
+        <form th:action="@{/servicios/contratar}" method="post">
+            <input type="hidden" id="reserva-servicio-id" name="servicioId" required>
+
+            <div class="grupo-modal">
+                <label for="fechaDeseada">Fecha deseada para el servicio</label>
+                <input type="date" id="fechaDeseada" name="fechaDeseada" required>
+            </div>
+
+            <div class="grupo-modal">
+                <label for="contactoCliente">Tu medio de contacto (WhatsApp o correo UVG)</label>
+                <input type="text" id="contactoCliente" name="contactoCliente" placeholder="Ej. WhatsApp 5555-0000 o tu_correo@uvg.edu.gt" required>
+            </div>
+
+            <div class="grupo-modal">
+                <label for="metodoPago">Método de pago a realizar</label>
+                <select id="metodoPago" name="metodoPago" required>
+                    <option value="Efectivo en el campus">Efectivo en el campus (UVG)</option>
+                    <option value="Transferencia bancaria">Transferencia bancaria</option>
+                </select>
+            </div>
+
+            <div class="grupo-modal">
+                <label for="mensaje">Detalles de lo que necesitas</label>
+                <textarea id="mensaje" name="mensaje" placeholder="Describe el tema, horario sugerido o cualquier detalle importante..." required></textarea>
+            </div>
+
+            <p class="aviso">
+                <strong>Información del pago:</strong> El pago solo se realiza una vez que el proveedor <strong>acepte</strong> tu solicitud. Si la rechaza por disponibilidad, no se realiza ningún cobro.
+            </p>
+
+            <button type="submit" class="boton boton-reservar reservar-detalle">
+                Enviar solicitud de contratación
+                <span class="flecha" aria-hidden="true">→</span>
+            </button>
+        </form>
     </dialog>
 
     <!-- FOOTER -->
@@ -860,7 +892,7 @@
          */
         const serviciosDesdeJava = /*[[${serviciosBD}]]*/ [];
 
-        // Adaptamos los datos al formato exacto que usan los filtros de Antonio
+        // Adaptamos los datos incluyendo el usuario real que publicó el servicio y su contacto
         const servicios = serviciosDesdeJava.map(s => ({
             id: s.id,
             titulo: s.titulo,
@@ -869,8 +901,8 @@
             detalle: s.detalle,
             precio: s.precio,
             unidad: s.unidad,
-            // Como Erwin apenas hará el registro de usuarios, por ahora ponemos esto:
-            vendedor: "Estudiante UVG" 
+            contactoProveedor: s.contactoProveedor || "Se coordina al aceptar la solicitud",
+            vendedor: (s.usuario && s.usuario.nombre) ? s.usuario.nombre : "Estudiante UVG"
         }));
 
         const categorias = {
@@ -900,7 +932,7 @@
         }
 
         function precioFormateado(precio) {
-            return "Q" + precio.toFixed(2);
+            return "Q" + Number(precio).toFixed(2);
         }
 
         function crearElemento(etiqueta, clase, texto) {
@@ -913,10 +945,12 @@
         function mostrarDetalle(servicio, origen) {
             servicioSeleccionado = servicio;
             botonOrigen = origen;
+            const catInfo = categorias[servicio.categoria] || categorias.otros;
             document.getElementById("detalle-titulo").textContent = servicio.titulo;
-            document.getElementById("detalle-categoria").textContent = categorias[servicio.categoria].nombre;
+            document.getElementById("detalle-categoria").textContent = catInfo.nombre;
             document.getElementById("detalle-descripcion").textContent = servicio.detalle || servicio.descripcion;
-            document.getElementById("detalle-vendedor").textContent = "Ofrecido por: " + servicio.vendedor + " · Perfil de ejemplo";
+            document.getElementById("detalle-vendedor").textContent = "Ofrecido por: " + servicio.vendedor;
+            document.getElementById("detalle-contacto").textContent = "Contacto del proveedor: " + servicio.contactoProveedor;
             document.getElementById("detalle-precio").textContent = precioFormateado(servicio.precio) + " " + servicio.unidad;
             detalle.showModal();
         }
@@ -925,8 +959,9 @@
             if (!servicio) return;
             if (origen) botonOrigen = origen;
             if (detalle.open) detalle.close();
+            document.getElementById("reserva-servicio-id").value = servicio.id;
             document.getElementById("reserva-servicio").textContent = servicio.titulo + " · Ofrecido por " + servicio.vendedor;
-            document.getElementById("reserva-precio").textContent = precioFormateado(servicio.precio) + " " + servicio.unidad;
+            document.getElementById("reserva-precio").textContent = "Monto a pagar: " + precioFormateado(servicio.precio) + " (" + servicio.unidad + ")";
             ventanaReserva.showModal();
         }
 
@@ -944,7 +979,7 @@
         });
 
         function crearTarjeta(servicio, indice, animar) {
-            const categoria = categorias[servicio.categoria];
+            const categoria = categorias[servicio.categoria] || categorias.otros;
             const tarjeta = crearElemento("article", "tarjeta");
             if (animar) tarjeta.style.animationDelay = (indice * 0.07) + "s";
             else tarjeta.style.animation = "none";
@@ -972,9 +1007,9 @@
             botonDetalles.setAttribute("aria-label", "Ver más sobre " + servicio.titulo);
             botonDetalles.addEventListener("click", () => mostrarDetalle(servicio, botonDetalles));
 
-            const botonReservar = crearElemento("button", "boton boton-reservar", "Reservar");
+            const botonReservar = crearElemento("button", "boton boton-reservar", "Contratar");
             botonReservar.type = "button";
-            botonReservar.setAttribute("aria-label", "Reservar " + servicio.titulo);
+            botonReservar.setAttribute("aria-label", "Contratar " + servicio.titulo);
             const flecha = crearElemento("span", "flecha", "→");
             flecha.setAttribute("aria-hidden", "true");
             botonReservar.append(flecha);
@@ -991,8 +1026,9 @@
         function mostrarServicios(animar = false) {
             const texto = normalizar(buscador.value.trim());
             const resultados = servicios.filter(servicio => {
+                const catInfo = categorias[servicio.categoria] || categorias.otros;
                 const coincideCategoria = categoriaActual === "todos" || servicio.categoria === categoriaActual;
-                const contenido = normalizar(servicio.titulo + " " + servicio.descripcion + " " + servicio.vendedor + " " + categorias[servicio.categoria].nombre);
+                const contenido = normalizar(servicio.titulo + " " + servicio.descripcion + " " + servicio.vendedor + " " + catInfo.nombre);
                 return coincideCategoria && contenido.includes(texto);
             });
 

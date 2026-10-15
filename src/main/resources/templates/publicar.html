@@ -90,7 +90,6 @@
             height: 23px;
         }
 
-        /* NAVEGACIÓN */
         .navegacion {
             display: flex;
             justify-content: center;
@@ -113,7 +112,6 @@
             border-bottom-color: var(--verde);
         }
 
-        /* CONTENIDO PRINCIPAL */
         main {
             max-width: 700px;
             margin: 50px auto;
@@ -141,7 +139,6 @@
             font-size: 16px;
         }
 
-        /* FORMULARIO */
         .grupo-formulario {
             margin-bottom: 22px;
         }
@@ -216,7 +213,6 @@
             font-weight: 600;
         }
 
-        /* FOOTER */
         footer {
             border-top: 1px solid #dfe5d8;
             padding: 28px;
@@ -290,12 +286,10 @@
             <p class="descripcion">Comparte tus habilidades con la comunidad de la UVG</p>
         </div>
 
-        <!-- Mensaje de éxito al publicar -->
         <div th:if="${exito}" class="mensaje-exito">
             ¡Tu servicio ha sido publicado exitosamente!
         </div>
 
-        <!-- Formulario que enviará los datos al backend mediante POST -->
         <form th:action="@{/publicar}" method="post">
             
             <div class="grupo-formulario">
@@ -334,6 +328,11 @@
                     <label for="unidad">Unidad de cobro</label>
                     <input type="text" id="unidad" name="unidad" placeholder="Ej. por hora, por proyecto..." required>
                 </div>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="contactoProveedor">Medio de contacto (WhatsApp o correo UVG)</label>
+                <input type="text" id="contactoProveedor" name="contactoProveedor" placeholder="Ej. WhatsApp 5555-1234 o tu_correo@uvg.edu.gt" required>
             </div>
 
             <button type="submit" class="btn-submit">Publicar servicio</button>

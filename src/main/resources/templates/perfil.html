@@ -27,7 +27,7 @@
 
         a { color: inherit; text-decoration: none; }
 
-        /* ENCABEZADO Y NAVEGACIÓN (Diseño unificado) */
+        /* ENCABEZADO Y NAVEGACIÓN */
         .encabezado { background: white; }
         .barra-superior {
             max-width: 1200px; margin: auto; padding: 20px 28px;
@@ -43,7 +43,7 @@
         .perfil {
             justify-self: end; display: grid; place-items: center;
             width: 46px; height: 46px; border: 1px solid #dce5dc; border-radius: 50%;
-            background: #edf4e8; /* Resaltado activo */
+            background: #edf4e8;
         }
         .perfil svg { width: 23px; height: 23px; color: var(--verde); }
         .navegacion {
@@ -57,11 +57,11 @@
         .navegacion a:hover { color: var(--verde); }
 
         /* CONTENIDO DEL PERFIL */
-        main { max-width: 800px; margin: 50px auto; padding: 0 24px 65px; }
+        main { max-width: 900px; margin: 50px auto; padding: 0 24px 65px; }
         
         .cabecera-perfil {
-            background: white; padding: 40px; border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-align: center; margin-bottom: 40px;
+            background: white; padding: 36px; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-align: center; margin-bottom: 35px;
         }
         .cabecera-perfil h1 { margin: 0 0 10px; color: var(--verde-oscuro); font-size: 32px; }
         .cabecera-perfil p { color: var(--gris); margin: 0 0 20px; font-size: 16px; }
@@ -73,21 +73,72 @@
         .btn-logout:hover { background: #e2e8dd; }
 
         .mensaje-exito {
-            background-color: #eafaf1; color: #2ecc71; padding: 15px;
+            background-color: #eafaf1; color: #27ae60; padding: 15px;
             border-radius: 8px; margin-bottom: 25px; text-align: center; font-weight: 600;
         }
 
-        h2 { font-size: 24px; color: var(--verde-oscuro); margin-bottom: 20px; }
+        .mensaje-error {
+            background-color: #fdeaea; color: var(--rojo); padding: 15px;
+            border-radius: 8px; margin-bottom: 25px; text-align: center; font-weight: 600;
+        }
 
-        /* LISTA DE SERVICIOS */
-        .lista-gestion { display: grid; gap: 15px; }
+        .bloque-seccion {
+            margin-bottom: 42px;
+        }
+
+        h2 {
+            font-size: 22px; color: var(--verde-oscuro);
+            margin: 0 0 16px; padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8dd;
+        }
+
+        .vacio-caja {
+            background: white; border: 1px dashed #cdd8ca; border-radius: 12px;
+            text-align: center; color: var(--gris); padding: 24px; font-size: 14px;
+        }
+
+        /* TARJETAS DE GESTIÓN Y CONTRATACIONES */
+        .lista-gestion { display: grid; gap: 16px; }
         .item-servicio {
             background: white; border: 1px solid #dfe7d9; border-radius: 12px;
             padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            gap: 18px; flex-wrap: wrap;
         }
-        .info-servicio h3 { margin: 0 0 5px; font-size: 18px; color: var(--texto); }
-        .info-servicio p { margin: 0; font-size: 13px; color: var(--gris); }
-        
+        .info-servicio { flex: 1; min-width: 240px; }
+        .info-servicio h3 { margin: 0 0 6px; font-size: 18px; color: var(--texto); }
+        .info-servicio p { margin: 4px 0; font-size: 13.5px; color: var(--gris); line-height: 1.5; }
+        .info-pago {
+            margin-top: 8px !important; padding: 8px 12px; border-radius: 8px;
+            background: #f7f8f2; color: var(--texto) !important; font-size: 13px !important;
+        }
+
+        /* ETIQUETAS DE ESTADO */
+        .badge-estado {
+            display: inline-block; padding: 4px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .estado-PENDIENTE { background: #fef5e7; color: #d68910; border: 1px solid #fad7a0; }
+        .estado-ACEPTADA { background: #e8f8f5; color: #148f77; border: 1px solid #a3e4d7; }
+        .estado-RECHAZADA { background: #fdeaea; color: #c0392b; border: 1px solid #f5b7b1; }
+        .estado-COMPLETADA { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+
+        /* BOTONES DE ACCIÓN */
+        .acciones-solicitud {
+            display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+        }
+        .btn-aceptar {
+            background: var(--verde); color: white; border: none;
+            padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer;
+        }
+        .btn-aceptar:hover { background: #26724e; }
+
+        .btn-completar {
+            background: var(--lima); color: var(--verde-oscuro); border: 1px solid #b7d870;
+            padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer;
+        }
+        .btn-completar:hover { background: #c4e47c; }
+
         .btn-eliminar {
             background: #fdeaea; color: var(--rojo); border: 1px solid #fad4d4;
             padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s;
@@ -127,40 +178,134 @@
 
     <main>
         <div class="cabecera-perfil">
-            <!-- Thymeleaf inyecta el nombre del usuario autenticado -->
             <h1>Hola, <span th:text="${usuario}">Estudiante</span></h1>
-            <p>Gestiona tu cuenta y tus publicaciones activas.</p>
+            <p>Gestiona tus contrataciones, pagos y servicios publicados.</p>
             
             <form th:action="@{/logout}" method="post">
                 <button type="submit" class="btn-logout">Cerrar Sesión</button>
             </form>
         </div>
 
-        <!-- Alerta de éxito al eliminar -->
+        <!-- Alertas de éxito o error -->
         <div th:if="${exito}" class="mensaje-exito" th:text="${exito}"></div>
+        <div th:if="${error}" class="mensaje-error" th:text="${error}"></div>
 
-        <h2>Mis servicios publicados</h2>
+        <!-- SECCIÓN 1: SERVICIOS QUE ME CONTRATARON (COMO PROVEEDOR) -->
+        <section class="bloque-seccion">
+            <h2>Servicios que me contrataron (Solicitudes recibidas)</h2>
 
-        <div class="lista-gestion">
-            <!-- Mensaje si no hay servicios -->
-            <div th:if="${#lists.isEmpty(misServicios)}" style="text-align: center; color: #647368; padding: 20px;">
-                No tienes ningún servicio publicado actualmente.
-            </div>
-
-            <!-- Iterador de servicios -->
-            <article class="item-servicio" th:each="servicio : ${misServicios}">
-                <div class="info-servicio">
-                    <h3 th:text="${servicio.titulo}">Título del servicio</h3>
-                    <p th:text="${servicio.categoria} + ' · Q' + ${servicio.precio}">Categoría · Q0.00</p>
+            <div class="lista-gestion">
+                <div th:if="${#lists.isEmpty(solicitudesRecibidas)}" class="vacio-caja">
+                    Aún no has recibido solicitudes de contratación en tus servicios.
                 </div>
-                
-                <!-- Botón de borrado conectado al ID del servicio -->
-                <form th:action="@{/servicios/eliminar}" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este servicio de forma permanente?');">
-                    <input type="hidden" name="id" th:value="${servicio.id}">
-                    <button type="submit" class="btn-eliminar">Borrar</button>
-                </form>
-            </article>
-        </div>
+
+                <article class="item-servicio" th:each="sol : ${solicitudesRecibidas}">
+                    <div class="info-servicio">
+                        <span class="badge-estado" th:classappend="'estado-' + ${sol.estado}" th:text="${sol.estado}">PENDIENTE</span>
+                        <h3 th:text="${sol.servicio.titulo}">Título del servicio</h3>
+                        <p>
+                            <strong>Contratado por:</strong> <span th:text="${sol.cliente.nombre}">Cliente</span>
+                            · <strong>Contacto:</strong> <span th:text="${sol.contactoCliente}">Contacto</span>
+                        </p>
+                        <p>
+                            <strong>Fecha solicitada:</strong> <span th:text="${sol.fechaDeseada}">Fecha</span>
+                            · <strong>Solicitud:</strong> <span th:text="${sol.mensaje}">Mensaje</span>
+                        </p>
+                        <p class="info-pago">
+                            <strong>Pago acordado:</strong> Q<span th:text="${sol.montoPago}">0.00</span>
+                            (<span th:text="${sol.metodoPago}">Método</span>)
+                            <span th:if="${sol.estado == 'PENDIENTE'}"> · <em>Acepta la solicitud para habilitar el pago.</em></span>
+                            <span th:if="${sol.estado == 'ACEPTADA'}"> · <em>Coordina con el estudiante y confirma cuando recibas el pago.</em></span>
+                            <span th:if="${sol.estado == 'RECHAZADA'}"> · <em>Solicitud rechazada (sin cobro).</em></span>
+                            <span th:if="${sol.estado == 'COMPLETADA'}"> · <em>Pago recibido y servicio completado.</em></span>
+                        </p>
+                    </div>
+
+                    <!-- Botones para el proveedor según el estado -->
+                    <div class="acciones-solicitud" th:if="${sol.estado == 'PENDIENTE'}">
+                        <form th:action="@{/contrataciones/estado}" method="post">
+                            <input type="hidden" name="contratacionId" th:value="${sol.id}">
+                            <input type="hidden" name="nuevoEstado" value="ACEPTADA">
+                            <button type="submit" class="btn-aceptar">Aceptar</button>
+                        </form>
+
+                        <form th:action="@{/contrataciones/estado}" method="post">
+                            <input type="hidden" name="contratacionId" th:value="${sol.id}">
+                            <input type="hidden" name="nuevoEstado" value="RECHAZADA">
+                            <button type="submit" class="btn-eliminar">Rechazar</button>
+                        </form>
+                    </div>
+
+                    <div class="acciones-solicitud" th:if="${sol.estado == 'ACEPTADA'}">
+                        <form th:action="@{/contrataciones/estado}" method="post">
+                            <input type="hidden" name="contratacionId" th:value="${sol.id}">
+                            <input type="hidden" name="nuevoEstado" value="COMPLETADA">
+                            <button type="submit" class="btn-completar">Confirmar Pago y Completado ✓</button>
+                        </form>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: SERVICIOS QUE CONTRATÉ (COMO CLIENTE) -->
+        <section class="bloque-seccion">
+            <h2>Servicios que contraté</h2>
+
+            <div class="lista-gestion">
+                <div th:if="${#lists.isEmpty(misContrataciones)}" class="vacio-caja">
+                    No has contratado ningún servicio todavía. Puedes explorar el catálogo en la pestaña "Servicios".
+                </div>
+
+                <article class="item-servicio" th:each="con : ${misContrataciones}">
+                    <div class="info-servicio">
+                        <span class="badge-estado" th:classappend="'estado-' + ${con.estado}" th:text="${con.estado}">PENDIENTE</span>
+                        <h3 th:text="${con.servicio.titulo}">Título del servicio</h3>
+                        <p>
+                            <strong>Proveedor:</strong>
+                            <span th:text="${con.servicio.usuario != null ? con.servicio.usuario.nombre : 'Estudiante UVG'}">Proveedor</span>
+                            · <strong>Contacto proveedor:</strong>
+                            <span th:text="${con.servicio.contactoProveedor != null ? con.servicio.contactoProveedor : 'Por coordinar'}">Contacto</span>
+                        </p>
+                        <p>
+                            <strong>Fecha solicitada:</strong> <span th:text="${con.fechaDeseada}">Fecha</span>
+                            · <strong>Mi mensaje:</strong> <span th:text="${con.mensaje}">Mensaje</span>
+                        </p>
+                        <p class="info-pago">
+                            <strong>Información de pago:</strong> Q<span th:text="${con.montoPago}">0.00</span>
+                            mediante <span th:text="${con.metodoPago}">Método</span> —
+                            <strong th:if="${con.estado == 'PENDIENTE'}">Pendiente de aceptación (Aún no realices el pago).</strong>
+                            <strong th:if="${con.estado == 'ACEPTADA'}" style="color: #148f77;">¡Solicitud aceptada! Comunícate con el proveedor y realiza el pago acordado.</strong>
+                            <strong th:if="${con.estado == 'RECHAZADA'}" style="color: #c0392b;">Solicitud rechazada — No debes realizar ningún pago.</strong>
+                            <strong th:if="${con.estado == 'COMPLETADA'}" style="color: #1e8449;">Servicio recibido y pagado.</strong>
+                        </p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: MIS SERVICIOS PUBLICADOS -->
+        <section class="bloque-seccion">
+            <h2>Mis servicios publicados</h2>
+
+            <div class="lista-gestion">
+                <div th:if="${#lists.isEmpty(misServicios)}" class="vacio-caja">
+                    No tienes ningún servicio publicado actualmente.
+                </div>
+
+                <article class="item-servicio" th:each="servicio : ${misServicios}">
+                    <div class="info-servicio">
+                        <h3 th:text="${servicio.titulo}">Título del servicio</h3>
+                        <p th:text="${servicio.categoria} + ' · Q' + ${servicio.precio} + ' (' + ${servicio.unidad} + ')'">Categoría · Q0.00</p>
+                        <p th:if="${servicio.contactoProveedor}" th:text="'Contacto registrado: ' + ${servicio.contactoProveedor}"></p>
+                    </div>
+                    
+                    <form th:action="@{/servicios/eliminar}" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este servicio de forma permanente?');">
+                        <input type="hidden" name="id" th:value="${servicio.id}">
+                        <button type="submit" class="btn-eliminar">Borrar</button>
+                    </form>
+                </article>
+            </div>
+        </section>
     </main>
 
     <footer>
