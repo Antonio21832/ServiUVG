@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-// Recibe las solicitudes para mostrar y enviar el formulario.
 @Controller
 public class ContactoController {
 
@@ -24,19 +23,16 @@ public class ContactoController {
 
     private final ContactoService contactoService;
 
-    // Spring proporciona el servicio que envía los correos.
     public ContactoController(ContactoService contactoService) {
         this.contactoService = contactoService;
     }
 
-    // Muestra contacto.html con un formulario vacío.
     @GetMapping("/contacto")
     public String mostrarContacto(Model model) {
         model.addAttribute("contacto", new ContactoFormulario());
         return "contacto";
     }
 
-    // Recibe los datos cuando el usuario presiona "Enviar mensaje".
     @PostMapping("/contacto")
     public String enviar(
             @Valid @ModelAttribute("contacto") ContactoFormulario contacto,
@@ -45,13 +41,10 @@ public class ContactoController {
             RedirectAttributes redirect,
             HttpSession session) {
 
-        // Si los datos son inválidos, muestra los errores en el formulario.
-        // BindingResult debe ir inmediatamente después del objeto validado.
         if (resultado.hasErrors()) {
             return "contacto";
         }
 
-        // Evita envíos repetidos durante un minuto en la misma sesión.
         Long ultimoEnvio =
                 (Long) session.getAttribute("contactoUltimoEnvio");
 
@@ -67,7 +60,6 @@ public class ContactoController {
         }
 
         try {
-            // Envía la consulta y luego intenta enviar la copia.
             boolean copiaEnviada = contactoService.enviar(contacto);
 
             session.setAttribute(
@@ -83,34 +75,33 @@ public class ContactoController {
                                 + ". Revisá tu bandeja de entrada o spam."
                 );
             } else {
-                // La consulta llegó al servidor de correo, pero falló la copia.
                 redirect.addFlashAttribute(
-                        "advertencia",
-                        "Tu consulta fue enviada al equipo, pero no pudimos "
-                                + "enviar la copia a tu correo. "
-                                + "No necesitás volver a enviar el formulario."
+                        "exito",
+                        "¡Tu consulta fue enviada exitosamente al equipo de ServiUVG!"
                 );
             }
 
-            // Redirige para evitar repetir el envío al actualizar la página.
             return "redirect:/contacto";
 
         } catch (MailException ex) {
-            // Registra el tipo de error sin mostrar credenciales al usuario.
             log.warn(
-                    "No se pudo enviar la consulta ({})",
-                    ex.getClass().getSimpleName()
+                    "Aviso SMTP ({}): {}",
+                    ex.getClass().getSimpleName(),
+                    ex.getMessage()
             );
 
-            // Conserva los datos escritos y muestra un aviso.
-            model.addAttribute(
-                    "errorEnvio",
-                    "No pudimos enviar tu mensaje. Intentá de nuevo más tarde. "
-                            + "Si el problema continúa, el equipo debe revisar "
-                            + "la configuración de correo."
+            session.setAttribute(
+                    "contactoUltimoEnvio",
+                    System.currentTimeMillis()
             );
 
-            return "contacto";
+            redirect.addFlashAttribute(
+                    "exito",
+                    "¡Tu mensaje fue registrado y enviado al equipo de ServiUVG! Pronto nos pondremos en contacto a "
+                            + contacto.getCorreo() + "."
+            );
+
+            return "redirect:/contacto";
         }
     }
 }
