@@ -326,7 +326,14 @@
 
                 <div class="grupo-formulario">
                     <label for="unidad">Unidad de cobro</label>
-                    <input type="text" id="unidad" name="unidad" placeholder="Ej. por hora, por proyecto..." required>
+                    <select id="unidad" name="unidad" required>
+                        <option value="" disabled selected>Selecciona una unidad</option>
+                        <option value="Por hora">Por hora</option>
+                        <option value="Por clase">Por clase</option>
+                        <option value="Por proyecto">Por proyecto</option>
+                        <option value="Tarifa fija">Tarifa fija</option>
+                        <option value="Otro">Otro</option>
+                    </select>
                 </div>
             </div>
 
@@ -351,5 +358,14 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('precio').addEventListener('blur', function() {
+            let valor = parseFloat(this.value);
+            if (!isNaN(valor)) {
+                this.value = valor.toFixed(2);
+            }
+        });
+    </script>
 </body>
 </html>
