@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -22,6 +23,18 @@ public class ServicioController {
 
     @Autowired
     private ServicioRepository servicioRepository;
+    private final List<String> palabrasProhibidas = List.of("grosería");
+
+    private boolean contienePalabrasProhibidas(String texto) {
+        if (texto == null || texto.isBlank()) return false;
+        String textoLower = texto.toLowerCase();
+        for (String palabra : palabrasProhibidas) {
+            if (textoLower.contains(palabra)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -37,12 +50,17 @@ public class ServicioController {
             return "redirect:/login";
         }
 
+        if (contienePalabrasProhibidas(servicio.getTitulo()) || contienePalabrasProhibidas(servicio.getDescripcion()) || contienePalabrasProhibidas(servicio.getDetalle())) {
+            redirectAttributes.addFlashAttribute("error", "Tu publicación contiene palabras no permitidas o lenguaje inapropiado");
+            return "publicar";
+        }
+    
+
         Optional<Usuario> usuarioOpt = usuarioRepository.findByNombre(principal.getName());
         usuarioOpt.ifPresent(servicio::setUsuario);
 
         servicioRepository.save(servicio);
         redirectAttributes.addFlashAttribute("exito", true);
-
         return "redirect:/publicar";
     }
 
