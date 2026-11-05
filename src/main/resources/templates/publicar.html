@@ -290,6 +290,10 @@
             ¡Tu servicio ha sido publicado exitosamente!
         </div>
 
+        <div th:if="${error}" class="mensaje-error" style="background-color: #fde8e8; color: #e74c3c; padding: 15px; border-radius: 8px; margin-bottom: 25px; font-size: 15px; text-align: center; font-weight: 600;">
+            <span th:text="${error}"></span>
+        </div>
+
         <form th:action="@{/publicar}" method="post">
             
             <div class="grupo-formulario">
