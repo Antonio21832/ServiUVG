@@ -6,6 +6,7 @@ import com.proyecto.serviuvg.entity.Usuario;
 import com.proyecto.serviuvg.repository.ContratacionRepository;
 import com.proyecto.serviuvg.repository.ServicioRepository;
 import com.proyecto.serviuvg.repository.UsuarioRepository;
+import com.proyecto.serviuvg.service.ResenaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,9 @@ public class PaginasController {
     @Autowired
     private ContratacionRepository contratacionRepository;
 
+    @Autowired
+    private ResenaService resenaService;
+
     @GetMapping("/")
     public String mostrarIndex() {
         return "index";
@@ -36,10 +40,10 @@ public class PaginasController {
 
 
     @GetMapping("/servicios")
-    public String mostrarServicios(Model model) {
-        List<Servicio> listaServicios = servicioRepository.findAll();
-
-        model.addAttribute("serviciosBD", listaServicios);
+    public String mostrarServicios(Model model, Principal principal) {
+        model.addAttribute("serviciosBD", resenaService.listarCatalogo(
+            principal == null ? null : principal.getName()));
+        model.addAttribute("usuarioAutenticado", principal != null);
 
         return "servicios";
     }

@@ -7,6 +7,7 @@ import com.proyecto.serviuvg.entity.Usuario;
 import com.proyecto.serviuvg.repository.ContratacionRepository;
 import com.proyecto.serviuvg.repository.ServicioRepository;
 import com.proyecto.serviuvg.repository.UsuarioRepository;
+import com.proyecto.serviuvg.repository.ResenaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -39,6 +40,9 @@ public class ServicioController {
 
     @Autowired
     private ContratacionRepository contratacionRepository;
+
+    @Autowired
+    private ResenaRepository resenaRepository;
 
     private final List<String> palabrasProhibidas = List.of(
         "puta", "puto", "putas", "putos", "mierda", "mierdas",
@@ -426,6 +430,7 @@ public class ServicioController {
                             .equals(principal.getName()))) {
 
                 contratacionRepository.deleteByServicio(servicio);
+                resenaRepository.deleteByServicio(servicio);
                 servicioRepository.delete(servicio);
 
                 redirectAttributes.addFlashAttribute(

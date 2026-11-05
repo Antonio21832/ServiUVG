@@ -420,6 +420,89 @@
             font-weight: 400;
         }
 
+        .precio-calificacion {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .precio-calificacion > .precio { min-width: 0; overflow-wrap: anywhere; }
+        .calificacion { flex-shrink: 0; text-align: right; }
+        .estrellas-promedio {
+            position: relative;
+            display: inline-block;
+            color: #d6dcd5;
+            font: 21px/1.3 monospace;
+            white-space: nowrap;
+        }
+        .estrellas-relleno {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: var(--porcentaje, 0%);
+            overflow: hidden;
+            color: #b77909;
+        }
+        .calificacion-dato { margin: 3px 0 0; font-size: 12px; color: var(--gris); }
+        .enlace-resenas {
+            display: block;
+            padding: 4px 0;
+            margin-left: auto;
+            border: 0;
+            background: transparent;
+            color: var(--verde);
+            font-size: 12px;
+            text-decoration: underline;
+        }
+        .seccion-resenas { margin-top: 24px; border-top: 1px solid #dfe7d9; padding-top: 16px; }
+        .resena { padding: 14px 0; border-bottom: 1px solid #edf0e8; }
+        .resena p { margin: 6px 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+        .resena-fecha { color: var(--gris); font-size: 12px; }
+        .resena-estrellas { color: #9b6705; }
+        #formulario-resena { margin-top: 20px; }
+        #formulario-resena fieldset { padding: 0; margin: 14px 0; border: 0; }
+        #formulario-resena legend { font-size: 14px; font-weight: 700; }
+        .selector-estrellas { display: flex; gap: 4px; margin-top: 8px; }
+        .selector-estrellas input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            min-height: 0;
+            padding: 0;
+            clip-path: inset(50%);
+            overflow: hidden;
+        }
+        .selector-estrellas label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            min-height: 44px;
+            margin: 0;
+            border-radius: 6px;
+            color: #647368;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .selector-estrellas label.elegida { color: #9b6705; }
+        .selector-estrellas input:focus-visible + label { outline: 3px solid #82b649; }
+        .selector-estrellas label:hover { background: #f0f4e9; }
+        .solo-lectores {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip-path: inset(50%);
+            white-space: nowrap;
+        }
+        #formulario-resena .boton { margin-top: 12px; }
+        .boton:disabled { opacity: 0.65; cursor: wait; }
+        .mensaje-error { color: #862c23; background: #fff0ed; }
+        .mensaje-exito { color: var(--verde); }
+
         .acciones-servicio {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -795,6 +878,9 @@
             <p>Catálogo activo · Precios según la unidad indicada</p>
         </div>
 
+        <p th:if="${exitoResena}" th:text="${exitoResena}" class="aviso mensaje-exito" role="status"></p>
+        <p th:if="${errorResena}" th:text="${errorResena}" class="aviso mensaje-error" role="alert"></p>
+
         <section id="lista-servicios" class="servicios" aria-label="Servicios disponibles"></section>
 
         <section id="sin-resultados" class="vacio" hidden>
@@ -818,11 +904,47 @@
         <p id="detalle-descripcion" class="detalle-texto"></p>
         <p id="detalle-vendedor" class="detalle-texto"></p>
         <p id="detalle-contacto" class="detalle-texto"></p>
-        <p id="detalle-precio" class="precio"></p>
+        <div class="precio-calificacion">
+            <p id="detalle-precio" class="precio"></p>
+            <div id="detalle-calificacion"></div>
+        </div>
         <button type="button" id="reservar-desde-detalle" class="boton boton-reservar reservar-detalle">
             Contratar este servicio
             <span class="flecha" aria-hidden="true">→</span>
         </button>
+        <section class="seccion-resenas" aria-labelledby="resenas-titulo">
+            <h3 id="resenas-titulo" tabindex="-1">Reseñas de la comunidad</h3>
+            <p th:if="${exitoResena}" th:text="${exitoResena}" class="aviso mensaje-exito" role="status"></p>
+            <p th:if="${errorResena}" th:text="${errorResena}" class="aviso mensaje-error" role="alert"></p>
+            <div id="lista-resenas"></div>
+            <p id="estado-resena" class="aviso" hidden></p>
+            <p id="login-resena" class="aviso" hidden>
+                <a th:href="@{/login}"><u>Iniciá sesión</u></a> para dejar tu reseña.
+            </p>
+            <form id="formulario-resena" th:action="@{/servicios/resenar}" method="post" hidden>
+                <input type="hidden" id="resena-servicio-id" name="servicioId">
+                <fieldset>
+                    <legend>Tu calificación (obligatoria)</legend>
+                    <div class="selector-estrellas">
+                        <input type="radio" id="estrella-1" name="estrellas" value="1" required>
+                        <label for="estrella-1" title="1 estrella"><span aria-hidden="true">★</span><span class="solo-lectores">1 estrella</span></label>
+                        <input type="radio" id="estrella-2" name="estrellas" value="2" required>
+                        <label for="estrella-2" title="2 estrellas"><span aria-hidden="true">★</span><span class="solo-lectores">2 estrellas</span></label>
+                        <input type="radio" id="estrella-3" name="estrellas" value="3" required>
+                        <label for="estrella-3" title="3 estrellas"><span aria-hidden="true">★</span><span class="solo-lectores">3 estrellas</span></label>
+                        <input type="radio" id="estrella-4" name="estrellas" value="4" required>
+                        <label for="estrella-4" title="4 estrellas"><span aria-hidden="true">★</span><span class="solo-lectores">4 estrellas</span></label>
+                        <input type="radio" id="estrella-5" name="estrellas" value="5" required>
+                        <label for="estrella-5" title="5 estrellas"><span aria-hidden="true">★</span><span class="solo-lectores">5 estrellas</span></label>
+                    </div>
+                    <p id="estrellas-elegidas" class="detalle-texto" aria-live="polite">Elegí de 1 a 5 estrellas.</p>
+                </fieldset>
+                <label for="resena-comentario">Tu comentario (opcional)</label>
+                <textarea id="resena-comentario" name="comentario" maxlength="500" placeholder="Contale a la comunidad qué te pareció el servicio."></textarea>
+                <p class="detalle-texto">Máximo 500 caracteres. Solo una reseña por cuenta y servicio.</p>
+                <button type="submit" class="boton">Publicar reseña</button>
+            </form>
+        </section>
     </dialog>
 
     <!-- VENTANA: CONTRATAR / RESERVAR SERVICIO (CONECTADA A BASE DE DATOS) -->
@@ -891,6 +1013,7 @@
          * Thymeleaf inyectará la lista de Java aquí automáticamente
          */
         const serviciosDesdeJava = /*[[${serviciosBD}]]*/ [];
+        const usuarioAutenticado = /*[[${usuarioAutenticado}]]*/ false;
 
         // Adaptamos los datos incluyendo el usuario real que publicó el servicio y su contacto
         const servicios = serviciosDesdeJava.map(s => ({
@@ -902,7 +1025,12 @@
             precio: s.precio,
             unidad: s.unidad,
             contactoProveedor: s.contactoProveedor || "Se coordina al aceptar la solicitud",
-            vendedor: (s.usuario && s.usuario.nombre) ? s.usuario.nombre : "Estudiante UVG"
+            vendedor: s.vendedor || "Estudiante UVG",
+            promedio: s.promedio,
+            cantidadResenas: s.cantidadResenas,
+            propietario: s.propietario,
+            miCalificacion: s.miCalificacion,
+            resenas: s.resenas || []
         }));
 
         const categorias = {
@@ -942,6 +1070,76 @@
             return elemento;
         }
 
+        function crearCalificacion(servicio, conEnlace = false) {
+            const bloque = crearElemento("div", "calificacion");
+            const estrellas = crearElemento("span", "estrellas-promedio", "★★★★★");
+            estrellas.setAttribute("aria-hidden", "true");
+            const relleno = crearElemento("span", "estrellas-relleno", "★★★★★");
+            relleno.style.setProperty("--porcentaje", (servicio.promedio / 5 * 100) + "%");
+            estrellas.append(relleno);
+            const dato = servicio.cantidadResenas > 0 ? servicio.promedio.toFixed(1) + " / 5" : "Sin reseñas";
+            bloque.append(estrellas, crearElemento("p", "calificacion-dato", dato));
+            if (conEnlace) {
+                const enlace = crearElemento("button", "enlace-resenas", servicio.cantidadResenas +
+                    (servicio.cantidadResenas === 1 ? " reseña" : " reseñas"));
+                enlace.type = "button";
+                enlace.setAttribute("aria-label", "Ver reseñas de " + servicio.titulo);
+                enlace.addEventListener("click", () => {
+                    mostrarDetalle(servicio, enlace);
+                    document.getElementById("resenas-titulo").focus();
+                });
+                bloque.append(enlace);
+            }
+            return bloque;
+        }
+
+        const formularioResena = document.getElementById("formulario-resena");
+        const radiosEstrellas = formularioResena.querySelectorAll('input[name="estrellas"]');
+
+        function actualizarSelectorEstrellas() {
+            const seleccionada = formularioResena.querySelector('input[name="estrellas"]:checked');
+            const valor = seleccionada ? Number(seleccionada.value) : 0;
+            radiosEstrellas.forEach(radio => {
+                radio.nextElementSibling.classList.toggle("elegida", Number(radio.value) <= valor);
+            });
+            document.getElementById("estrellas-elegidas").textContent = valor
+                ? valor + (valor === 1 ? " estrella seleccionada" : " estrellas seleccionadas")
+                : "Elegí de 1 a 5 estrellas.";
+        }
+        radiosEstrellas.forEach(radio => radio.addEventListener("change", actualizarSelectorEstrellas));
+        formularioResena.addEventListener("submit", () => {
+            formularioResena.querySelector('button[type="submit"]').disabled = true;
+        });
+
+        function mostrarResenas(servicio) {
+            const contenedor = document.getElementById("lista-resenas");
+            contenedor.replaceChildren();
+            if (!servicio.resenas.length) {
+                contenedor.append(crearElemento("p", "detalle-texto", "Este servicio todavía no tiene reseñas."));
+            }
+            servicio.resenas.forEach(resena => {
+                const articulo = crearElemento("article", "resena");
+                const estrellas = crearElemento("p", "resena-estrellas",
+                    "★".repeat(resena.estrellas) + "☆".repeat(5 - resena.estrellas));
+                estrellas.setAttribute("aria-label", resena.estrellas + " de 5 estrellas");
+                const fecha = crearElemento("time", "resena-fecha", resena.fecha);
+                fecha.dateTime = resena.fecha;
+                articulo.append(crearElemento("strong", "", resena.autor), estrellas, fecha);
+                if (resena.comentario) articulo.append(crearElemento("p", "", resena.comentario));
+                contenedor.append(articulo);
+            });
+            const estado = document.getElementById("estado-resena");
+            estado.textContent = servicio.propietario ? "No podés calificar tu propio servicio."
+                : servicio.miCalificacion != null ? "Ya calificaste este servicio con " + servicio.miCalificacion + " de 5 estrellas." : "";
+            estado.hidden = !estado.textContent;
+            document.getElementById("login-resena").hidden = usuarioAutenticado;
+            formularioResena.hidden = !usuarioAutenticado || servicio.propietario || servicio.miCalificacion != null;
+            formularioResena.reset();
+            document.getElementById("resena-servicio-id").value = servicio.id;
+            formularioResena.querySelector('button[type="submit"]').disabled = false;
+            actualizarSelectorEstrellas();
+        }
+
         function mostrarDetalle(servicio, origen) {
             servicioSeleccionado = servicio;
             botonOrigen = origen;
@@ -952,6 +1150,8 @@
             document.getElementById("detalle-vendedor").textContent = "Ofrecido por: " + servicio.vendedor;
             document.getElementById("detalle-contacto").textContent = "Contacto del proveedor: " + servicio.contactoProveedor;
             document.getElementById("detalle-precio").textContent = precioFormateado(servicio.precio) + " " + servicio.unidad;
+            document.getElementById("detalle-calificacion").replaceChildren(crearCalificacion(servicio));
+            mostrarResenas(servicio);
             detalle.showModal();
         }
 
@@ -1000,6 +1200,8 @@
             const pie = crearElemento("div", "tarjeta-pie");
             const precio = crearElemento("p", "precio", precioFormateado(servicio.precio));
             precio.append(crearElemento("span", "unidad", servicio.unidad));
+            const precioCalificacion = crearElemento("div", "precio-calificacion");
+            precioCalificacion.append(precio, crearCalificacion(servicio, true));
 
             const acciones = crearElemento("div", "acciones-servicio");
             const botonDetalles = crearElemento("button", "boton boton-detalles", "Ver más");
@@ -1016,7 +1218,7 @@
             botonReservar.addEventListener("click", () => abrirReserva(servicio, botonReservar));
 
             acciones.append(botonDetalles, botonReservar);
-            pie.append(precio, acciones);
+            pie.append(precioCalificacion, acciones);
             contenido.append(pie);
             tarjeta.append(portada, contenido);
 
@@ -1065,6 +1267,8 @@
         });
 
         mostrarServicios(true);
+        const servicioResenado = servicios.find(s => String(s.id) === parametros.get("resenas"));
+        if (servicioResenado) mostrarDetalle(servicioResenado, null);
     </script>
 </body>
 </html>
