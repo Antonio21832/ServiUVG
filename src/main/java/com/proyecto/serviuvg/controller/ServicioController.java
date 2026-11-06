@@ -85,8 +85,7 @@ public class ServicioController {
         "mi3rd4", "m1erd4", "c3r0t3", "cer0te", "v3rg4",
         "v3rga", "j0d3r", "j0der", "kbron",
         "mar1c0n", "webon", "weon", "huev0n",
-        "hdp", "h1jueputa",
-        "prostitución", "prostitucion", "hijoputa", "hijaputa", "hijos de puta", "hijas de puta",
+        "hdp", "h1jueputa", "prostitución", "prostitucion", "hijoputa", "hijaputa", "hijos de puta", "hijas de puta",
         "hija de perra", "hijos de perra", "hijas de perra", "hijueperra", "hijueperras",
         "gonorrea", "gonorreas", "malnacido", "malnacida", "malnacidos", "malnacidas",
         "desgraciado", "desgraciada", "desgraciados", "desgraciadas", "bastardo", "bastarda",
@@ -112,7 +111,6 @@ public class ServicioController {
         "homofóbico", "mongólico"
     );
 
-    // Busca palabras o frases completas y trata los signos literalmente.
     private final Pattern patronProhibidas = Pattern.compile(
         "\\b(?:" + palabrasProhibidas.stream()
             .map(Pattern::quote)
@@ -128,7 +126,6 @@ public class ServicioController {
         return patronProhibidas.matcher(texto).find();
     }
 
-    // Aceptamos únicamente los campos que el usuario puede modificar.
     @InitBinder({"servicio", "formulario"})
     public void configurarFormulario(WebDataBinder binder) {
         binder.setAllowedFields(
@@ -184,7 +181,6 @@ public class ServicioController {
         return "redirect:/publicar";
     }
 
-    // Abre el formulario con los datos actuales del servicio.
     @GetMapping("/servicios/{id}/editar")
     public String mostrarEditarServicio(
             @PathVariable("id") Long id,
@@ -235,7 +231,6 @@ public class ServicioController {
         return "editar-servicio";
     }
 
-    // Valida y guarda los cambios enviados desde el formulario.
     @Transactional
     @PostMapping("/servicios/{id}/editar")
     public String actualizarServicio(
@@ -273,7 +268,6 @@ public class ServicioController {
             return "redirect:/perfil";
         }
 
-        // Aplicamos el filtro también durante la edición.
         if (contienePalabrasProhibidas(formulario.getTitulo())) {
             bindingResult.rejectValue(
                 "titulo",
@@ -303,7 +297,6 @@ public class ServicioController {
             return "editar-servicio";
         }
 
-        // Actualizamos la entidad recuperada de la base de datos.
         servicio.setTitulo(formulario.getTitulo());
         servicio.setCategoria(formulario.getCategoria());
         servicio.setDescripcion(formulario.getDescripcion());
@@ -322,7 +315,6 @@ public class ServicioController {
         return "redirect:/perfil";
     }
 
-    // Comprueba si el usuario autenticado es el dueño del servicio.
     private boolean esPropietario(Servicio servicio, Principal principal) {
         return principal != null
                 && servicio.getUsuario() != null
