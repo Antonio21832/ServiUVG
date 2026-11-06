@@ -7,7 +7,6 @@ import com.proyecto.serviuvg.entity.Usuario;
 import com.proyecto.serviuvg.repository.ContratacionRepository;
 import com.proyecto.serviuvg.repository.ServicioRepository;
 import com.proyecto.serviuvg.repository.UsuarioRepository;
-import com.proyecto.serviuvg.repository.ResenaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -28,6 +27,8 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Controller
 public class ServicioController {
@@ -41,11 +42,8 @@ public class ServicioController {
     @Autowired
     private ContratacionRepository contratacionRepository;
 
-    @Autowired
-    private ResenaRepository resenaRepository;
-
     private final List<String> palabrasProhibidas = List.of(
-        "puta", "prostitución", "prostitucion", "puto", "putas", "putos", "mierda", "mierdas",
+        "puta", "puto", "putas", "putos", "mierda", "mierdas",
         "maldito", "maldita", "malditos", "malditas",
         "jodido", "jodida", "joder", "jodete",
         "pendejo", "pendeja", "pendejos", "pendejas",
@@ -85,46 +83,41 @@ public class ServicioController {
         "no vales nada", "te odio", "voy a abusar de ti",
         "pvt4", "p.u.t.a", "p u t a", "p3nd3j0", "pendej0",
         "mi3rd4", "m1erd4", "c3r0t3", "cer0te", "v3rg4",
-        "v3rga", "j0d3r", "j0der", "kbron", "cabron",
-        "mar1c0n", "maricon", "webon", "weon", "huev0n",
-        "hdp", "h1jueputa", "hijoputa", "hijaputa", "hijos de puta", "hijas de puta",
-        "hija de perra", "hijos de perra", "hijas de perra",
-        "hijueperra", "hijueperras", "gonorrea", "gonorreas",
-        "malnacido", "malnacida", "malnacidos", "malnacidas",
-        "desgraciado", "desgraciada", "desgraciados", "desgraciadas",
-        "bastardo", "bastarda", "bastardos", "bastardas",
-        "cabrona", "cabronas", "cabronazo", "cabronazos",
-        "cabrón", "cabrones de mierda", "mamón", "mamones",
-        "maricón", "maricones", "mariconazo",
-        "estúpido", "estúpida", "estúpidos", "estúpidas",
-        "imbécil", "imbéciles", "inútil", "inútiles",
-        "huevón", "huevones", "huevonas",
-        "pelotudo", "pelotuda", "pelotudos", "pelotudas",
-        "boludo", "boluda", "boludos", "boludas",
-        "gilipollas", "gilipollez", "gilipolleces",
-        "capullo", "capulla", "soplapollas",
-        "chingas", "chingados", "chingadas", "chingatumadre",
-        "chinga tu madre", "chingue su madre", "chinga tu puta madre",
-        "vete a la mierda", "andate a la mierda", "vete al carajo",
-        "andate al carajo", "vete a la verga", "andate a la verga",
-        "me cago en ti", "me cago en vos", "me cago en tu madre",
-        "comepinga", "comepollas", "chupapijas", "chupaverga",
-        "chupapolla", "chupapollas", "chupamela", "chúpamela",
-        "pajero", "pajera", "pajeros", "pajeras",
-        "puñeta", "puñetas", "puñetero", "puñetera",
-        "cagada", "cagadas", "cagado", "cagados",
-        "mierdoso", "mierdosa", "mierdosos", "mierdosas",
-        "cerotazo", "cerotazos", "pizadin", "pizadito",
-        "pizadita", "pizarrin", "pizarrín",
-        "culeros", "culeras", "culerazo", "culerazos",
-        "caremierda", "cara de mierda", "cara de verga",
-        "cara de culo", "cara de picha", "pedazo de mierda",
-        "pedazo de idiota", "pedazo de imbecil", "pedazo de imbécil",
-        "vales mierda", "vales verga", "sos una mierda",
-        "sos una basura", "sos un idiota", "sos una idiota",
-        "jódete", "jodanse", "jódanse", "que te jodan",
-        "que te den por culo", "metetelo por el culo",
-        "métetelo por el culo"
+        "v3rga", "j0d3r", "j0der", "kbron",
+        "mar1c0n", "webon", "weon", "huev0n",
+        "hdp", "h1jueputa",
+        "prostitución", "prostitucion", "hijoputa", "hijaputa", "hijos de puta", "hijas de puta",
+        "hija de perra", "hijos de perra", "hijas de perra", "hijueperra", "hijueperras",
+        "gonorrea", "gonorreas", "malnacido", "malnacida", "malnacidos", "malnacidas",
+        "desgraciado", "desgraciada", "desgraciados", "desgraciadas", "bastardo", "bastarda",
+        "bastardos", "bastardas", "cabronas", "cabronazo", "cabronazos", "cabrón",
+        "cabrones de mierda", "mamón", "mamones", "maricón", "maricones", "mariconazo", "estúpido",
+        "estúpida", "estúpidos", "estúpidas", "imbécil", "imbéciles", "inútil", "inútiles",
+        "huevón", "huevones", "huevonas", "pelotudo", "pelotuda", "pelotudos", "pelotudas",
+        "boludo", "boluda", "boludos", "boludas", "gilipollas", "gilipollez", "gilipolleces",
+        "capullo", "capulla", "soplapollas", "chingas", "chingados", "chingadas", "chingatumadre",
+        "chinga tu madre", "chingue su madre", "chinga tu puta madre", "vete a la mierda",
+        "andate a la mierda", "vete al carajo", "andate al carajo", "vete a la verga",
+        "andate a la verga", "me cago en ti", "me cago en vos", "me cago en tu madre", "comepinga",
+        "comepollas", "chupapijas", "chupaverga", "chupapolla", "chupapollas", "chupamela",
+        "chúpamela", "pajero", "pajera", "pajeros", "pajeras", "puñeta", "puñetas", "puñetero",
+        "puñetera", "cagada", "cagadas", "cagado", "cagados", "mierdoso", "mierdosa", "mierdosos",
+        "mierdosas", "cerotazo", "cerotazos", "pizadin", "pizadito", "pizadita", "pizarrin",
+        "pizarrín", "culeros", "culeras", "culerazo", "culerazos", "caremierda", "cara de mierda",
+        "cara de verga", "cara de culo", "cara de picha", "pedazo de mierda", "pedazo de idiota",
+        "pedazo de imbecil", "pedazo de imbécil", "vales mierda", "vales verga", "sos una mierda",
+        "sos una basura", "sos un idiota", "sos una idiota", "jódete", "jodanse", "jódanse",
+        "que te jodan", "que te den por culo", "metetelo por el culo", "métetelo por el culo",
+        "masturbación", "pornografía", "pornográfico", "ojalá te mueras", "mátate", "suicídate",
+        "homofóbico", "mongólico"
+    );
+
+    // Busca palabras o frases completas y trata los signos literalmente.
+    private final Pattern patronProhibidas = Pattern.compile(
+        "\\b(?:" + palabrasProhibidas.stream()
+            .map(Pattern::quote)
+            .collect(Collectors.joining("|")) + ")\\b",
+        Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.UNICODE_CHARACTER_CLASS
     );
 
     private boolean contienePalabrasProhibidas(String texto) {
@@ -132,15 +125,7 @@ public class ServicioController {
             return false;
         }
 
-        String textoLower = texto.toLowerCase();
-
-        for (String palabra : palabrasProhibidas) {
-            if (textoLower.contains(palabra)) {
-                return true;
-            }
-        }
-
-        return false;
+        return patronProhibidas.matcher(texto).find();
     }
 
     // Aceptamos únicamente los campos que el usuario puede modificar.
@@ -288,7 +273,7 @@ public class ServicioController {
             return "redirect:/perfil";
         }
 
-        // Aplicamos el filtro de Erwin también durante la edición.
+        // Aplicamos el filtro también durante la edición.
         if (contienePalabrasProhibidas(formulario.getTitulo())) {
             bindingResult.rejectValue(
                 "titulo",
@@ -467,7 +452,6 @@ public class ServicioController {
                             .equals(principal.getName()))) {
 
                 contratacionRepository.deleteByServicio(servicio);
-                resenaRepository.deleteByServicio(servicio);
                 servicioRepository.delete(servicio);
 
                 redirectAttributes.addFlashAttribute(
