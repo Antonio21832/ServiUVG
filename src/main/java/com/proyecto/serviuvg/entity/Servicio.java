@@ -15,6 +15,8 @@ public class Servicio {
 
     @Column(nullable = false)
     private String categoria;
+    @Column(length = 40)
+    private String subcategoria;
 
     @Column(nullable = false, length = 100)
     private String descripcion;
@@ -46,6 +48,9 @@ public class Servicio {
 
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    public String getSubcategoria(){return subcategoria; }
+    public void setSubcategoria(String subcategoria) {this.subcategoria=subcategoria;}
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }

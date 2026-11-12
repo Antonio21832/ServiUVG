@@ -81,7 +81,7 @@ public class ResenaService {
                 r.getUsuario().getNombre(), r.getEstrellas(), r.getComentario(),
                 r.getFecha().toLocalDate().toString()
             )).toList();
-            return new ServicioCatalogo(s.getId(), s.getTitulo(), s.getCategoria(), s.getDescripcion(),
+            return new ServicioCatalogo(s.getId(), s.getTitulo(), s.getCategoria(), s.getSubcategoria(), s.getDescripcion(),
                 s.getDetalle(), s.getPrecio(), s.getUnidad(), s.getContactoProveedor(),
                 s.getUsuario() == null ? "Estudiante UVG" : s.getUsuario().getNombre(),
                 promedio, resenas.size(), propietario, miCalificacion, vistas);

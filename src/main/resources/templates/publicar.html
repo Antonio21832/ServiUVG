@@ -312,6 +312,21 @@
                 </select>
             </div>
 
+            <div class="grupo-formulario" id="grupo-subcategoria" hidden>
+                <label for="subcategoria">Materia de la tutoría</label>
+                <select id="subcategoria" name="subcategoria">
+                    <option value="" disabled selected>Selecciona una materia...</option>
+                    <option value="calculo">Cálculo</option>
+                    <option value="algebra">Álgebra y trigonometría</option>
+                    <option value="fisica">Física</option>
+                    <option value="quimica">Química</option>
+                    <option value="programacion">Programación</option>
+                    <option value="estadistica">Estadística</option>
+                    <option value="logica-digital">Lógica digital</option>
+                    <option value="otra">Otra materia</option>
+                </select>
+            </div>
+
             <div class="grupo-formulario">
                 <label for="descripcion">Descripción corta (máximo 100 caracteres)</label>
                 <input type="text" id="descripcion" name="descripcion" placeholder="Resumen breve de lo que ofreces..." maxlength="100" required>
@@ -364,6 +379,16 @@
     </footer>
 
     <script>
+        const categoriaSel = document.getElementById('categoria');
+        const grupoSub = document.getElementById('grupo-subcategoria');
+        const subSel = document.getElementById('subcategoria');
+        categoriaSel.addEventListener('change', () => {
+            const esTutoria = categoriaSel.value === 'tutorias';
+            grupoSub.hidden = !esTutoria;
+            subSel.required = esTutoria;
+            if (!esTutoria) subSel.value = '';
+        });
+
         document.getElementById('precio').addEventListener('blur', function() {
             let valor = parseFloat(this.value);
             if (!isNaN(valor)) {

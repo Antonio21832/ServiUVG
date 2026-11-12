@@ -274,6 +274,24 @@
                    th:errors="*{categoria}"></p>
             </div>
 
+            <div class="grupo-formulario" id="grupo-subcategoria"
+                th:hidden="${formulario.categoria != 'tutorias'}">
+                <label for="subcategoria">Materia de la tutoría</label>
+                <select id="subcategoria" th:field="*{subcategoria}" th:errorclass="campo-invalido">
+                    <option value="">Selecciona una materia</option>
+                    <option value="calculo">Cálculo</option>
+                    <option value="algebra">Álgebra y trigonometría</option>
+                    <option value="fisica">Física</option>
+                    <option value="quimica">Química</option>
+                    <option value="programacion">Programación</option>
+                    <option value="estadistica">Estadística</option>
+                    <option value="logica-digital">Lógica digital</option>
+                    <option value="otra">Otra materia</option>
+                </select>
+                <p class="error-campo" th:if="${#fields.hasErrors('subcategoria')}"
+                th:errors="*{subcategoria}"></p>
+            </div>
+
             <div class="grupo-formulario">
                 <label for="descripcion">
                     Descripción corta (máximo 100 caracteres)
@@ -404,5 +422,18 @@
             </div>
         </div>
     </footer>
+    <script>
+    const categoriaSel = document.getElementById('categoria');
+    const grupoSub = document.getElementById('grupo-subcategoria');
+    const subSel = document.getElementById('subcategoria');
+    function actualizarSub() {
+        const esTutoria = categoriaSel.value === 'tutorias';
+        grupoSub.hidden = !esTutoria;
+        subSel.required = esTutoria;
+        if (!esTutoria) subSel.value = '';
+    }
+    categoriaSel.addEventListener('change', actualizarSub);
+    actualizarSub();
+</script>
 </body>
 </html>

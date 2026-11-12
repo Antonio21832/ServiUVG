@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -126,11 +127,16 @@ public class ServicioController {
         return patronProhibidas.matcher(texto).find();
     }
 
+    private static final Set<String> SUBCATEGORIAS_TUTORIA = Set.of(
+    "calculo", "algebra", "fisica", "quimica", "programacion", "estadistica", "logica-digital", "ingles", "otra"
+    );
+
     @InitBinder({"servicio", "formulario"})
     public void configurarFormulario(WebDataBinder binder) {
         binder.setAllowedFields(
             "titulo",
             "categoria",
+            "subcategoria",
             "descripcion",
             "detalle",
             "precio",
@@ -164,6 +170,10 @@ public class ServicioController {
             );
 
             return "redirect:/publicar";
+        }
+
+        if (!"tutorias".equals(servicio.getCategoria()) || !SUBCATEGORIAS_TUTORIA.contains(servicio.getSubcategoria())) {
+            servicio.setSubcategoria(null);
         }
 
         Optional<Usuario> usuarioOpt =
@@ -219,6 +229,7 @@ public class ServicioController {
 
         formulario.setTitulo(servicio.getTitulo());
         formulario.setCategoria(servicio.getCategoria());
+        formulario.setSubcategoria(servicio.getSubcategoria());
         formulario.setDescripcion(servicio.getDescripcion());
         formulario.setDetalle(servicio.getDetalle());
         formulario.setPrecio(BigDecimal.valueOf(servicio.getPrecio()));
@@ -299,9 +310,11 @@ public class ServicioController {
 
         servicio.setTitulo(formulario.getTitulo());
         servicio.setCategoria(formulario.getCategoria());
+        servicio.setSubcategoria(formulario.getSubcategoria());
         servicio.setDescripcion(formulario.getDescripcion());
         servicio.setDetalle(formulario.getDetalle());
-        servicio.setPrecio(formulario.getPrecio().doubleValue());
+        servicio.setSubcategoria(
+            "tutorias".equals(formulario.getCategoria()) ? formulario.getSubcategoria() : null);
         servicio.setUnidad(formulario.getUnidad());
         servicio.setContactoProveedor(formulario.getContactoProveedor());
 

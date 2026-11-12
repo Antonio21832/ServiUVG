@@ -4,7 +4,7 @@ import java.util.List;
 
 // Solo datos públicos: nunca enviamos entidades de usuario ni contraseñas al navegador.
 public record ServicioCatalogo(
-    Long id, String titulo, String categoria, String descripcion, String detalle,
+    Long id, String titulo, String categoria, String subcategoria, String descripcion, String detalle,
     Double precio, String unidad, String contactoProveedor, String vendedor,
     double promedio, int cantidadResenas, boolean propietario, Integer miCalificacion,
     List<ResenaVista> resenas
@@ -25,6 +25,7 @@ public record ServicioCatalogo(
     public boolean isPropietario() { return propietario; }
     public Integer getMiCalificacion() { return miCalificacion; }
     public List<ResenaVista> getResenas() { return resenas; }
+    public String getSubcategoria() { return subcategoria; }
 
     public record ResenaVista(String autor, int estrellas, String comentario, String fecha) {
         public String getAutor() { return autor; }

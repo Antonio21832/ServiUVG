@@ -20,6 +20,10 @@ public class ServicioEdicionFormulario {
              message = "Selecciona una categoría válida.")
     private String categoria;
 
+    @Pattern(regexp = "calculo|algebra|fisica|quimica|programacion|estadistica|logica-digital|otra",
+         message = "Selecciona una materia válida.")
+    private String subcategoria;
+
     @NotBlank(message = "Escribe una descripción corta.")
     @Size(max = 100, message = "La descripción admite hasta 100 caracteres.")
     private String descripcion;
@@ -57,6 +61,14 @@ public class ServicioEdicionFormulario {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
+    }
+
+    public String getSubcategoria() { 
+        return subcategoria; 
+    }
+    
+    public void setSubcategoria(String subcategoria) { 
+        this.subcategoria = subcategoria; 
     }
 
     public String getDescripcion() {

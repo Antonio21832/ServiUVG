@@ -284,6 +284,20 @@
             border-color: var(--verde);
         }
 
+        /* SUBMENÚ DE MATERIAS (solo para Tutorías) */
+
+        .subcategorias {
+            margin-top: -8px;
+            padding: 14px 16px;
+            background: #f4f8ee;
+            border-radius: 14px;
+        }
+
+        .subcategorias .categoria-boton {
+            font-size: 12px;
+            padding: 8px 14px;
+        }
+
         .informacion-resultados {
             display: flex;
             justify-content: space-between;
@@ -871,6 +885,9 @@
                 <button type="button" class="categoria-boton" data-categoria="programacion" aria-pressed="false">Programación</button>
                 <button type="button" class="categoria-boton" data-categoria="otros" aria-pressed="false">Otros</button>
             </div>
+
+            <div class="categorias subcategorias" id="subcategorias"
+                 role="group" aria-label="Materia de tutoría" hidden></div>
         </section>
 
         <div class="informacion-resultados">
@@ -1020,6 +1037,7 @@
             id: s.id,
             titulo: s.titulo,
             categoria: s.categoria,
+            subcategoria: s.subcategoria,
             descripcion: s.descripcion,
             detalle: s.detalle,
             precio: s.precio,
@@ -1040,6 +1058,17 @@
             otros: { nombre: "Otros", simbolo: "＋" }
         };
 
+        const subcategoriasTutoria = {
+            calculo: "Cálculo",
+            algebra: "Álgebra y trigonometría",
+            fisica: "Física",
+            quimica: "Química",
+            programacion: "Programación",
+            estadistica: "Estadística",
+            "logica-digital": "Lógica digital",
+            otra: "Otra materia"
+        };
+
         const lista = document.getElementById("lista-servicios");
         const buscador = document.getElementById("busqueda");
         const orden = document.getElementById("orden");
@@ -1054,6 +1083,9 @@
         const parametros = new URLSearchParams(window.location.search);
         const categoriaURL = parametros.get("categoria");
         let categoriaActual = Object.hasOwn(categorias, categoriaURL) ? categoriaURL : "todos";
+        const contenedorSub = document.getElementById("subcategorias");
+        const subURL = parametros.get("sub");
+        let subcategoriaActual = Object.hasOwn(subcategoriasTutoria, subURL) ? subURL : "todas";
 
         function normalizar(texto) {
             return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -1145,7 +1177,9 @@
             botonOrigen = origen;
             const catInfo = categorias[servicio.categoria] || categorias.otros;
             document.getElementById("detalle-titulo").textContent = servicio.titulo;
-            document.getElementById("detalle-categoria").textContent = catInfo.nombre;
+            const nombreSubDetalle = subcategoriasTutoria[servicio.subcategoria];
+            document.getElementById("detalle-categoria").textContent =
+                nombreSubDetalle ? catInfo.nombre + " · " + nombreSubDetalle : catInfo.nombre;
             document.getElementById("detalle-descripcion").textContent = servicio.detalle || servicio.descripcion;
             document.getElementById("detalle-vendedor").textContent = "Ofrecido por: " + servicio.vendedor;
             document.getElementById("detalle-contacto").textContent = "Contacto del proveedor: " + servicio.contactoProveedor;
@@ -1187,7 +1221,9 @@
             const portada = crearElemento("div", "tarjeta-portada " + servicio.categoria);
             const simbolo = crearElemento("span", "simbolo", categoria.simbolo);
             simbolo.setAttribute("aria-hidden", "true");
-            const etiqueta = crearElemento("span", "etiqueta-categoria", categoria.nombre);
+            const nombreSub = subcategoriasTutoria[servicio.subcategoria];
+            const etiqueta = crearElemento("span", "etiqueta-categoria",
+                nombreSub ? categoria.nombre + " · " + nombreSub : categoria.nombre);
             portada.append(simbolo, etiqueta);
 
             const contenido = crearElemento("div", "tarjeta-contenido");
@@ -1229,9 +1265,13 @@
             const texto = normalizar(buscador.value.trim());
             const resultados = servicios.filter(servicio => {
                 const catInfo = categorias[servicio.categoria] || categorias.otros;
+                const nombreSub = subcategoriasTutoria[servicio.subcategoria] || "";
                 const coincideCategoria = categoriaActual === "todos" || servicio.categoria === categoriaActual;
-                const contenido = normalizar(servicio.titulo + " " + servicio.descripcion + " " + servicio.vendedor + " " + catInfo.nombre);
-                return coincideCategoria && contenido.includes(texto);
+                const coincideSub = categoriaActual !== "tutorias"
+                    || subcategoriaActual === "todas"
+                    || servicio.subcategoria === subcategoriaActual;
+                const contenido = normalizar(servicio.titulo + " " + servicio.descripcion + " " + servicio.vendedor + " " + catInfo.nombre + " " + nombreSub);
+                return coincideCategoria && coincideSub && contenido.includes(texto);
             });
 
             if (orden.value === "menor") resultados.sort((a, b) => a.precio - b.precio);
@@ -1246,6 +1286,10 @@
             botonesCategoria.forEach(boton => {
                 boton.setAttribute("aria-pressed", String(boton.dataset.categoria === categoriaActual));
             });
+
+            contenedorSub.hidden = categoriaActual !== "tutorias";
+            contenedorSub.querySelectorAll(".categoria-boton").forEach(b =>
+                b.setAttribute("aria-pressed", String(b.dataset.sub === subcategoriaActual)));
         }
 
         buscador.addEventListener("input", () => mostrarServicios());
@@ -1254,6 +1298,7 @@
         botonesCategoria.forEach(boton => {
             boton.addEventListener("click", () => {
                 categoriaActual = boton.dataset.categoria;
+                subcategoriaActual = "todas";
                 mostrarServicios(true);
             });
         });
@@ -1262,9 +1307,28 @@
             buscador.value = "";
             orden.value = "original";
             categoriaActual = "todos";
+            subcategoriaActual = "todas";
             mostrarServicios(true);
             buscador.focus();
         });
+
+        function construirSubcategorias() {
+            const crear = (clave, texto) => {
+                const b = crearElemento("button", "categoria-boton", texto);
+                b.type = "button";
+                b.dataset.sub = clave;
+                b.setAttribute("aria-pressed", "false");
+                b.addEventListener("click", () => {
+                    subcategoriaActual = clave;
+                    mostrarServicios(true);
+                });
+                return b;
+            };
+            contenedorSub.append(crear("todas", "Todas las tutorías"));
+            Object.entries(subcategoriasTutoria).forEach(([clave, nombre]) =>
+                contenedorSub.append(crear(clave, nombre)));
+        }
+        construirSubcategorias();
 
         mostrarServicios(true);
         const servicioResenado = servicios.find(s => String(s.id) === parametros.get("resenas"));
