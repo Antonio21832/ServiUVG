@@ -516,6 +516,14 @@
         .boton:disabled { opacity: 0.65; cursor: wait; }
         .mensaje-error { color: #862c23; background: #fff0ed; }
         .mensaje-exito { color: var(--verde); }
+        .horario-visible {
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: #f0f6e7;
+            margin: 14px 0;
+        }
+        .horario-visible h3 { margin: 0 0 6px; font-size: 16px; }
+        .horario-visible p { margin: 0; line-height: 1.6; }
 
         .acciones-servicio {
             display: grid;
@@ -897,6 +905,7 @@
 
         <p th:if="${exitoResena}" th:text="${exitoResena}" class="aviso mensaje-exito" role="status"></p>
         <p th:if="${errorResena}" th:text="${errorResena}" class="aviso mensaje-error" role="alert"></p>
+        <p th:if="${error}" th:text="${error}" class="aviso mensaje-error" role="alert"></p>
 
         <section id="lista-servicios" class="servicios" aria-label="Servicios disponibles"></section>
 
@@ -921,6 +930,10 @@
         <p id="detalle-descripcion" class="detalle-texto"></p>
         <p id="detalle-vendedor" class="detalle-texto"></p>
         <p id="detalle-contacto" class="detalle-texto"></p>
+        <section class="horario-visible" aria-labelledby="detalle-horario-titulo">
+            <h3 id="detalle-horario-titulo">Disponibilidad semanal</h3>
+            <p id="detalle-disponibilidad"></p>
+        </section>
         <div class="precio-calificacion">
             <p id="detalle-precio" class="precio"></p>
             <div id="detalle-calificacion"></div>
@@ -972,6 +985,10 @@
         <h2 id="reserva-titulo">Contratar servicio</h2>
         <p id="reserva-servicio" class="detalle-texto"></p>
         <p id="reserva-precio" class="precio"></p>
+        <div class="horario-visible">
+            <h3>Horario del proveedor</h3>
+            <p id="reserva-disponibilidad"></p>
+        </div>
 
         <form th:action="@{/servicios/contratar}" method="post">
             <input type="hidden" id="reserva-servicio-id" name="servicioId" required>
@@ -979,6 +996,11 @@
             <div class="grupo-modal">
                 <label for="fechaDeseada">Fecha deseada para el servicio</label>
                 <input type="date" id="fechaDeseada" name="fechaDeseada" required>
+            </div>
+
+            <div class="grupo-modal">
+                <label for="horaDeseada">Hora deseada para empezar</label>
+                <input type="time" id="horaDeseada" name="horaDeseada" required>
             </div>
 
             <div class="grupo-modal">
@@ -996,7 +1018,7 @@
 
             <div class="grupo-modal">
                 <label for="mensaje">Detalles de lo que necesitas</label>
-                <textarea id="mensaje" name="mensaje" placeholder="Describe el tema, horario sugerido o cualquier detalle importante..." required></textarea>
+                <textarea id="mensaje" name="mensaje" placeholder="Describe el tema o cualquier detalle importante..." required></textarea>
             </div>
 
             <p class="aviso">
@@ -1048,6 +1070,7 @@
             cantidadResenas: s.cantidadResenas,
             propietario: s.propietario,
             miCalificacion: s.miCalificacion,
+            disponibilidad: s.disponibilidad || [],
             resenas: s.resenas || []
         }));
 
@@ -1093,6 +1116,13 @@
 
         function precioFormateado(precio) {
             return "Q" + Number(precio).toFixed(2);
+        }
+
+        function textoDisponibilidad(servicio) {
+            if (!servicio.disponibilidad.length) return "Horario por confirmar con el proveedor.";
+            return servicio.disponibilidad
+                .map(franja => franja.dia + " " + franja.inicio + "–" + franja.fin)
+                .join(" · ");
         }
 
         function crearElemento(etiqueta, clase, texto) {
@@ -1183,6 +1213,7 @@
             document.getElementById("detalle-descripcion").textContent = servicio.detalle || servicio.descripcion;
             document.getElementById("detalle-vendedor").textContent = "Ofrecido por: " + servicio.vendedor;
             document.getElementById("detalle-contacto").textContent = "Contacto del proveedor: " + servicio.contactoProveedor;
+            document.getElementById("detalle-disponibilidad").textContent = textoDisponibilidad(servicio);
             document.getElementById("detalle-precio").textContent = precioFormateado(servicio.precio) + " " + servicio.unidad;
             document.getElementById("detalle-calificacion").replaceChildren(crearCalificacion(servicio));
             mostrarResenas(servicio);
@@ -1191,13 +1222,40 @@
 
         function abrirReserva(servicio, origen) {
             if (!servicio) return;
+            servicioSeleccionado = servicio;
             if (origen) botonOrigen = origen;
             if (detalle.open) detalle.close();
             document.getElementById("reserva-servicio-id").value = servicio.id;
             document.getElementById("reserva-servicio").textContent = servicio.titulo + " · Ofrecido por " + servicio.vendedor;
             document.getElementById("reserva-precio").textContent = "Monto a pagar: " + precioFormateado(servicio.precio) + " (" + servicio.unidad + ")";
+            document.getElementById("reserva-disponibilidad").textContent = textoDisponibilidad(servicio);
+            const fecha = document.getElementById("fechaDeseada");
+            const hoy = new Date();
+            fecha.min = [hoy.getFullYear(), String(hoy.getMonth() + 1).padStart(2, "0"),
+                String(hoy.getDate()).padStart(2, "0")].join("-");
+            fecha.value = "";
+            fecha.setCustomValidity("");
+            document.getElementById("horaDeseada").value = "";
             ventanaReserva.showModal();
         }
+
+        const fechaReserva = document.getElementById("fechaDeseada");
+        const horaReserva = document.getElementById("horaDeseada");
+        fechaReserva.addEventListener("input", () => horaReserva.setCustomValidity(""));
+        horaReserva.addEventListener("input", () => horaReserva.setCustomValidity(""));
+        ventanaReserva.querySelector('form[method="post"]').addEventListener("submit", evento => {
+            if (!servicioSeleccionado || !servicioSeleccionado.disponibilidad.length) return;
+            const partes = fechaReserva.value.split("-").map(Number);
+            const dia = new Date(partes[0], partes[1] - 1, partes[2]).getDay() || 7;
+            const disponible = servicioSeleccionado.disponibilidad.some(franja =>
+                franja.diaNumero === dia && horaReserva.value >= franja.inicio
+                    && horaReserva.value < franja.fin);
+            if (!disponible) {
+                evento.preventDefault();
+                horaReserva.setCustomValidity("Elige una fecha y hora dentro del horario publicado.");
+                horaReserva.reportValidity();
+            }
+        });
 
         function restaurarFoco() {
             if (!detalle.open && !ventanaReserva.open && botonOrigen && botonOrigen.isConnected) {

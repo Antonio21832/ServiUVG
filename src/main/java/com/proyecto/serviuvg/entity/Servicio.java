@@ -1,6 +1,8 @@
 package com.proyecto.serviuvg.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "servicios")
@@ -37,6 +39,10 @@ public class Servicio {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
+    @ElementCollection
+    @CollectionTable(name = "disponibilidad_servicios", joinColumns = @JoinColumn(name = "servicio_id"))
+    private List<FranjaDisponibilidad> disponibilidad = new ArrayList<>();
+
     public Servicio() {
     }
 
@@ -69,4 +75,10 @@ public class Servicio {
 
     public Usuario getUsuario() { return usuario; }
     public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+
+    public List<FranjaDisponibilidad> getDisponibilidad() { return disponibilidad; }
+    public void setDisponibilidad(List<FranjaDisponibilidad> franjas) {
+        disponibilidad.clear();
+        disponibilidad.addAll(franjas);
+    }
 }

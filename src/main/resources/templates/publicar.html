@@ -258,6 +258,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" th:href="@{/css/horario.css}">
 </head>
 <body>
     <header class="encabezado">
@@ -298,17 +299,18 @@
             
             <div class="grupo-formulario">
                 <label for="titulo">Título del servicio</label>
-                <input type="text" id="titulo" name="titulo" placeholder="Ej. Tutoría de Cálculo 1" required>
+                <input type="text" id="titulo" name="titulo" placeholder="Ej. Tutoría de Cálculo 1"
+                       th:value="${servicio != null ? servicio.titulo : ''}" required>
             </div>
 
             <div class="grupo-formulario">
                 <label for="categoria">Categoría</label>
                 <select id="categoria" name="categoria" required>
                     <option value="" disabled selected>Selecciona una categoría...</option>
-                    <option value="tutorias">Tutorías</option>
-                    <option value="diseno">Diseño</option>
-                    <option value="programacion">Programación</option>
-                    <option value="otros">Otros</option>
+                    <option value="tutorias" th:selected="${servicio != null and servicio.categoria == 'tutorias'}">Tutorías</option>
+                    <option value="diseno" th:selected="${servicio != null and servicio.categoria == 'diseno'}">Diseño</option>
+                    <option value="programacion" th:selected="${servicio != null and servicio.categoria == 'programacion'}">Programación</option>
+                    <option value="otros" th:selected="${servicio != null and servicio.categoria == 'otros'}">Otros</option>
                 </select>
             </div>
 
@@ -316,50 +318,56 @@
                 <label for="subcategoria">Materia de la tutoría</label>
                 <select id="subcategoria" name="subcategoria">
                     <option value="" disabled selected>Selecciona una materia...</option>
-                    <option value="calculo">Cálculo</option>
-                    <option value="algebra">Álgebra y trigonometría</option>
-                    <option value="fisica">Física</option>
-                    <option value="quimica">Química</option>
-                    <option value="programacion">Programación</option>
-                    <option value="estadistica">Estadística</option>
-                    <option value="logica-digital">Lógica digital</option>
-                    <option value="otra">Otra materia</option>
+                    <option value="calculo" th:selected="${servicio != null and servicio.subcategoria == 'calculo'}">Cálculo</option>
+                    <option value="algebra" th:selected="${servicio != null and servicio.subcategoria == 'algebra'}">Álgebra y trigonometría</option>
+                    <option value="fisica" th:selected="${servicio != null and servicio.subcategoria == 'fisica'}">Física</option>
+                    <option value="quimica" th:selected="${servicio != null and servicio.subcategoria == 'quimica'}">Química</option>
+                    <option value="programacion" th:selected="${servicio != null and servicio.subcategoria == 'programacion'}">Programación</option>
+                    <option value="estadistica" th:selected="${servicio != null and servicio.subcategoria == 'estadistica'}">Estadística</option>
+                    <option value="logica-digital" th:selected="${servicio != null and servicio.subcategoria == 'logica-digital'}">Lógica digital</option>
+                    <option value="otra" th:selected="${servicio != null and servicio.subcategoria == 'otra'}">Otra materia</option>
                 </select>
             </div>
 
             <div class="grupo-formulario">
                 <label for="descripcion">Descripción corta (máximo 100 caracteres)</label>
-                <input type="text" id="descripcion" name="descripcion" placeholder="Resumen breve de lo que ofreces..." maxlength="100" required>
+                <input type="text" id="descripcion" name="descripcion" placeholder="Resumen breve de lo que ofreces..."
+                       th:value="${servicio != null ? servicio.descripcion : ''}" maxlength="100" required>
             </div>
 
             <div class="grupo-formulario">
                 <label for="detalle">Detalle completo</label>
-                <textarea id="detalle" name="detalle" placeholder="Explica a fondo tu servicio, qué incluye, cómo trabajas..." required></textarea>
+                <textarea id="detalle" name="detalle" placeholder="Explica a fondo tu servicio, qué incluye, cómo trabajas..."
+                          th:text="${servicio != null ? servicio.detalle : ''}" required></textarea>
             </div>
 
             <div class="fila-doble">
                 <div class="grupo-formulario">
                     <label for="precio">Precio (Q)</label>
-                    <input type="number" id="precio" name="precio" min="0" step="0.01" placeholder="Ej. 50.00" required>
+                    <input type="number" id="precio" name="precio" min="0" step="0.01" placeholder="Ej. 50.00"
+                           th:value="${servicio != null ? servicio.precio : ''}" required>
                 </div>
 
                 <div class="grupo-formulario">
                     <label for="unidad">Unidad de cobro</label>
                     <select id="unidad" name="unidad" required>
                         <option value="" disabled selected>Selecciona una unidad</option>
-                        <option value="Por hora">Por hora</option>
-                        <option value="Por clase">Por clase</option>
-                        <option value="Por proyecto">Por proyecto</option>
-                        <option value="Tarifa fija">Tarifa fija</option>
-                        <option value="Otro">Otro</option>
+                        <option value="Por hora" th:selected="${servicio != null and servicio.unidad == 'Por hora'}">Por hora</option>
+                        <option value="Por clase" th:selected="${servicio != null and servicio.unidad == 'Por clase'}">Por clase</option>
+                        <option value="Por proyecto" th:selected="${servicio != null and servicio.unidad == 'Por proyecto'}">Por proyecto</option>
+                        <option value="Tarifa fija" th:selected="${servicio != null and servicio.unidad == 'Tarifa fija'}">Tarifa fija</option>
+                        <option value="Otro" th:selected="${servicio != null and servicio.unidad == 'Otro'}">Otro</option>
                     </select>
                 </div>
             </div>
 
             <div class="grupo-formulario">
                 <label for="contactoProveedor">Medio de contacto (WhatsApp o correo UVG)</label>
-                <input type="text" id="contactoProveedor" name="contactoProveedor" placeholder="Ej. WhatsApp 5555-1234 o tu_correo@uvg.edu.gt" required>
+                <input type="text" id="contactoProveedor" name="contactoProveedor" placeholder="Ej. WhatsApp 5555-1234 o tu_correo@uvg.edu.gt"
+                       th:value="${servicio != null ? servicio.contactoProveedor : ''}" required>
             </div>
+
+            <div th:replace="~{fragments/horario :: selector(${horario})}"></div>
 
             <button type="submit" class="btn-submit">Publicar servicio</button>
         </form>
@@ -378,6 +386,7 @@
         </div>
     </footer>
 
+    <script th:src="@{/js/horario.js}" defer></script>
     <script>
         const categoriaSel = document.getElementById('categoria');
         const grupoSub = document.getElementById('grupo-subcategoria');

@@ -183,6 +183,7 @@
             .barra-superior { padding: 16px; }
         }
     </style>
+    <link rel="stylesheet" th:href="@{/css/horario.css}">
 </head>
 <body>
     <header class="encabezado">
@@ -237,6 +238,7 @@
                  role="alert">
                 Revisa los campos indicados para guardar los cambios.
             </div>
+            <div th:if="${errorHorario}" class="mensaje-error" role="alert" th:text="${errorHorario}"></div>
 
             <div class="grupo-formulario">
                 <label for="titulo">Título del servicio</label>
@@ -386,9 +388,11 @@
                    th:errors="*{contactoProveedor}"></p>
             </div>
 
+            <div th:replace="~{fragments/horario :: selector(${horario})}"></div>
+
             <p class="aviso">
                 Los cambios de precio se aplican a nuevas contrataciones.
-                Las solicitudes anteriores conservan su monto acordado.
+                Las solicitudes anteriores conservan su monto acordado y la fecha y hora que solicitaron.
             </p>
 
             <div class="acciones">
@@ -422,6 +426,7 @@
             </div>
         </div>
     </footer>
+    <script th:src="@{/js/horario.js}" defer></script>
     <script>
     const categoriaSel = document.getElementById('categoria');
     const grupoSub = document.getElementById('grupo-subcategoria');

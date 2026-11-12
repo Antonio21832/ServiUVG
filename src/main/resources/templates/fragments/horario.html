@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<fieldset class="horario-semanal" th:fragment="selector(horario)" data-horario-semanal>
+    <legend>Disponibilidad semanal</legend>
+    <p>Marca los días en los que puedes atender y un horario para cada uno. Puedes modificarlo después.</p>
+    <div class="fila-horario" th:each="dia, iter : ${horario.dias}">
+        <label class="nombre-dia" th:for="|dia-${iter.index}|">
+            <input type="checkbox" th:id="|dia-${iter.index}|"
+                   th:name="|dias[${iter.index}].activo|" value="true" th:checked="${dia.activo}">
+            <span th:text="${#strings.capitalize(dia.etiqueta)}">Lunes</span>
+        </label>
+        <label class="hora-dia" th:for="|inicio-${iter.index}|">Desde
+            <input type="time" th:id="|inicio-${iter.index}|"
+                   th:name="|dias[${iter.index}].horaInicio|" th:value="${dia.horaInicio}">
+        </label>
+        <label class="hora-dia" th:for="|fin-${iter.index}|">Hasta
+            <input type="time" th:id="|fin-${iter.index}|"
+                   th:name="|dias[${iter.index}].horaFin|" th:value="${dia.horaFin}">
+        </label>
+    </div>
+    <p class="nota-horario">El horario se repite cada semana. Las solicitudes están sujetas a tu confirmación.</p>
+</fieldset>
+</body>
+</html>

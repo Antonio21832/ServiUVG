@@ -1,6 +1,7 @@
 package com.proyecto.serviuvg.controller;
 
 import com.proyecto.serviuvg.entity.Contratacion;
+import com.proyecto.serviuvg.dto.HorarioSemanalFormulario;
 import com.proyecto.serviuvg.entity.Servicio;
 import com.proyecto.serviuvg.entity.Usuario;
 import com.proyecto.serviuvg.repository.ContratacionRepository;
@@ -49,7 +50,8 @@ public class PaginasController {
     }
 
     @GetMapping("/publicar")
-    public String mostrarPublicar() {
+    public String mostrarPublicar(Model model) {
+        model.addAttribute("horario", new HorarioSemanalFormulario());
         return "publicar";
     }
 

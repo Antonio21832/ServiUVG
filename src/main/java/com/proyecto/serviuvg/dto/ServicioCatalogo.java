@@ -7,7 +7,7 @@ public record ServicioCatalogo(
     Long id, String titulo, String categoria, String subcategoria, String descripcion, String detalle,
     Double precio, String unidad, String contactoProveedor, String vendedor,
     double promedio, int cantidadResenas, boolean propietario, Integer miCalificacion,
-    List<ResenaVista> resenas
+    List<FranjaVista> disponibilidad, List<ResenaVista> resenas
 ) {
     // Getters JavaBean para el serializador JavaScript de Thymeleaf,
     // incluso si se utiliza sin Jackson 2 en Spring Boot 4.
@@ -24,8 +24,16 @@ public record ServicioCatalogo(
     public int getCantidadResenas() { return cantidadResenas; }
     public boolean isPropietario() { return propietario; }
     public Integer getMiCalificacion() { return miCalificacion; }
+    public List<FranjaVista> getDisponibilidad() { return disponibilidad; }
     public List<ResenaVista> getResenas() { return resenas; }
     public String getSubcategoria() { return subcategoria; }
+
+    public record FranjaVista(int diaNumero, String dia, String inicio, String fin) {
+        public int getDiaNumero() { return diaNumero; }
+        public String getDia() { return dia; }
+        public String getInicio() { return inicio; }
+        public String getFin() { return fin; }
+    }
 
     public record ResenaVista(String autor, int estrellas, String comentario, String fecha) {
         public String getAutor() { return autor; }

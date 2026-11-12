@@ -21,6 +21,9 @@ public class Contratacion {
     @Column(nullable = false)
     private String fechaDeseada;
 
+    @Column(length = 5)
+    private String horaDeseada;
+
     @Column(nullable = false, length = 120)
     private String contactoCliente;
 
@@ -50,6 +53,9 @@ public class Contratacion {
 
     public String getFechaDeseada() { return fechaDeseada; }
     public void setFechaDeseada(String fechaDeseada) { this.fechaDeseada = fechaDeseada; }
+
+    public String getHoraDeseada() { return horaDeseada; }
+    public void setHoraDeseada(String horaDeseada) { this.horaDeseada = horaDeseada; }
 
     public String getContactoCliente() { return contactoCliente; }
     public void setContactoCliente(String contactoCliente) { this.contactoCliente = contactoCliente; }

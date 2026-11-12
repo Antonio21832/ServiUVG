@@ -1,7 +1,9 @@
 package com.proyecto.serviuvg.controller;
 
 import com.proyecto.serviuvg.dto.ServicioEdicionFormulario;
+import com.proyecto.serviuvg.dto.HorarioSemanalFormulario;
 import com.proyecto.serviuvg.entity.Contratacion;
+import com.proyecto.serviuvg.entity.FranjaDisponibilidad;
 import com.proyecto.serviuvg.entity.Servicio;
 import com.proyecto.serviuvg.entity.Usuario;
 import com.proyecto.serviuvg.repository.ContratacionRepository;
@@ -25,6 +27,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -150,10 +156,18 @@ public class ServicioController {
         );
     }
 
+    @InitBinder("horario")
+    public void configurarHorario(WebDataBinder binder) {
+        binder.setAllowedFields("dias[*].activo", "dias[*].horaInicio", "dias[*].horaFin");
+        binder.setAutoGrowCollectionLimit(7);
+    }
+
     @PostMapping("/publicar")
     public String guardarServicio(
             @ModelAttribute("servicio") Servicio servicio,
+            @ModelAttribute("horario") HorarioSemanalFormulario horario,
             Principal principal,
+            Model model,
             RedirectAttributes redirectAttributes) {
 
         if (principal == null) {
@@ -176,6 +190,13 @@ public class ServicioController {
             servicio.setSubcategoria(null);
         }
 
+        try {
+            servicio.setDisponibilidad(horario.convertir());
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "publicar";
+        }
+
         Optional<Usuario> usuarioOpt =
             usuarioRepository.findByNombre(principal.getName());
 
@@ -191,6 +212,7 @@ public class ServicioController {
         return "redirect:/publicar";
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/servicios/{id}/editar")
     public String mostrarEditarServicio(
             @PathVariable("id") Long id,
@@ -238,6 +260,7 @@ public class ServicioController {
 
         model.addAttribute("formulario", formulario);
         model.addAttribute("servicioId", servicio.getId());
+        model.addAttribute("horario", HorarioSemanalFormulario.desdeServicio(servicio));
 
         return "editar-servicio";
     }
@@ -249,6 +272,7 @@ public class ServicioController {
             @Valid @ModelAttribute("formulario")
             ServicioEdicionFormulario formulario,
             BindingResult bindingResult,
+            @ModelAttribute("horario") HorarioSemanalFormulario horario,
             Principal principal,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -303,7 +327,14 @@ public class ServicioController {
             );
         }
 
-        if (bindingResult.hasErrors()) {
+        List<FranjaDisponibilidad> franjas = null;
+        try {
+            franjas = horario.convertir();
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorHorario", e.getMessage());
+        }
+
+        if (bindingResult.hasErrors() || franjas == null) {
             model.addAttribute("servicioId", servicio.getId());
             return "editar-servicio";
         }
@@ -317,6 +348,7 @@ public class ServicioController {
             "tutorias".equals(formulario.getCategoria()) ? formulario.getSubcategoria() : null);
         servicio.setUnidad(formulario.getUnidad());
         servicio.setContactoProveedor(formulario.getContactoProveedor());
+        servicio.setDisponibilidad(franjas);
 
         servicioRepository.save(servicio);
 
@@ -335,10 +367,12 @@ public class ServicioController {
                     .equals(servicio.getUsuario().getNombre());
     }
 
+    @Transactional
     @PostMapping("/servicios/contratar")
     public String contratarServicio(
             @RequestParam("servicioId") Long servicioId,
             @RequestParam("fechaDeseada") String fechaDeseada,
+            @RequestParam("horaDeseada") String horaDeseada,
             @RequestParam("contactoCliente") String contactoCliente,
             @RequestParam("metodoPago") String metodoPago,
             @RequestParam("mensaje") String mensaje,
@@ -367,6 +401,30 @@ public class ServicioController {
         Usuario cliente = clienteOpt.get();
         Servicio servicio = servicioOpt.get();
 
+        LocalDate fecha;
+        LocalTime hora;
+        try {
+            if (!horaDeseada.matches("(?:[01][0-9]|2[0-3]):[0-5][0-9]")) {
+                throw new DateTimeParseException("Hora inválida", horaDeseada, 0);
+            }
+            fecha = LocalDate.parse(fechaDeseada);
+            hora = LocalTime.parse(horaDeseada);
+        } catch (DateTimeParseException e) {
+            redirectAttributes.addFlashAttribute("error", "Selecciona una fecha y una hora válidas.");
+            return "redirect:/servicios";
+        }
+
+        if (fecha.isBefore(LocalDate.now(ZoneId.of("America/Guatemala")))) {
+            redirectAttributes.addFlashAttribute("error", "La fecha del servicio no puede haber pasado.");
+            return "redirect:/servicios";
+        }
+
+        if (!servicio.getDisponibilidad().isEmpty() && servicio.getDisponibilidad().stream()
+                .noneMatch(franja -> franja.incluye(fecha, hora))) {
+            redirectAttributes.addFlashAttribute("error", "Elige una fecha y hora dentro de la disponibilidad publicada.");
+            return "redirect:/servicios";
+        }
+
         if (servicio.getUsuario() != null
                 && servicio.getUsuario().getId().equals(cliente.getId())) {
 
@@ -383,6 +441,7 @@ public class ServicioController {
         contratacion.setServicio(servicio);
         contratacion.setCliente(cliente);
         contratacion.setFechaDeseada(fechaDeseada);
+        contratacion.setHoraDeseada(horaDeseada);
         contratacion.setContactoCliente(contactoCliente);
         contratacion.setMetodoPago(metodoPago);
         contratacion.setMontoPago(servicio.getPrecio());

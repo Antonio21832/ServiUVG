@@ -2,6 +2,8 @@ package com.proyecto.serviuvg.service;
 
 import com.proyecto.serviuvg.dto.ServicioCatalogo;
 import com.proyecto.serviuvg.dto.ServicioCatalogo.ResenaVista;
+import com.proyecto.serviuvg.dto.ServicioCatalogo.FranjaVista;
+import com.proyecto.serviuvg.dto.HorarioSemanalFormulario;
 import com.proyecto.serviuvg.entity.Resena;
 import com.proyecto.serviuvg.entity.Servicio;
 import com.proyecto.serviuvg.entity.Usuario;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -81,10 +84,16 @@ public class ResenaService {
                 r.getUsuario().getNombre(), r.getEstrellas(), r.getComentario(),
                 r.getFecha().toLocalDate().toString()
             )).toList();
+            List<FranjaVista> horario = s.getDisponibilidad().stream()
+                .sorted(Comparator.comparing(f -> f.getDia().getValue()))
+                .map(f -> new FranjaVista(f.getDia().getValue(),
+                    new HorarioSemanalFormulario.Dia(f.getDia()).getEtiqueta(),
+                    f.getHoraInicio().toString(), f.getHoraFin().toString()))
+                .toList();
             return new ServicioCatalogo(s.getId(), s.getTitulo(), s.getCategoria(), s.getSubcategoria(), s.getDescripcion(),
                 s.getDetalle(), s.getPrecio(), s.getUnidad(), s.getContactoProveedor(),
                 s.getUsuario() == null ? "Estudiante UVG" : s.getUsuario().getNombre(),
-                promedio, resenas.size(), propietario, miCalificacion, vistas);
+                promedio, resenas.size(), propietario, miCalificacion, horario, vistas);
         }).toList();
     }
 }

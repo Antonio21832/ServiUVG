@@ -339,6 +339,7 @@
                         <p>
                             <strong>Fecha solicitada:</strong>
                             <span th:text="${sol.fechaDeseada}">Fecha</span>
+                            <span th:if="${sol.horaDeseada != null}">a las <span th:text="${sol.horaDeseada}">09:00</span></span>
                             · <strong>Solicitud:</strong>
                             <span th:text="${sol.mensaje}">Mensaje</span>
                         </p>
@@ -466,6 +467,7 @@
                         <p>
                             <strong>Fecha solicitada:</strong>
                             <span th:text="${con.fechaDeseada}">Fecha</span>
+                            <span th:if="${con.horaDeseada != null}">a las <span th:text="${con.horaDeseada}">09:00</span></span>
                             · <strong>Mi mensaje:</strong>
                             <span th:text="${con.mensaje}">Mensaje</span>
                         </p>
