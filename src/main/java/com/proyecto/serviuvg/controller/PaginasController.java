@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 @Controller
 public class PaginasController {
 
@@ -40,14 +42,25 @@ public class PaginasController {
 
 
 
-    @GetMapping("/servicios")
-    public String mostrarServicios(Model model, Principal principal) {
-        model.addAttribute("serviciosBD", resenaService.listarCatalogo(
-            principal == null ? null : principal.getName()));
-        model.addAttribute("usuarioAutenticado", principal != null);
+        @GetMapping("/servicios")
+        public String mostrarServicios(
+                @RequestParam(value = "orden", required = false) String orden,
+                Model model,
+                Principal principal) {
 
-        return "servicios";
-    }
+            model.addAttribute(
+                "serviciosBD",
+                resenaService.listarCatalogo(
+                    principal == null ? null : principal.getName(),
+                    orden
+                )
+            );
+
+            model.addAttribute("usuarioAutenticado", principal != null);
+            model.addAttribute("paramOrden", orden);
+
+            return "servicios";
+        }
 
     @GetMapping("/publicar")
     public String mostrarPublicar(Model model) {

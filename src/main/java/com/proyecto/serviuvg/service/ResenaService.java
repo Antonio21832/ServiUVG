@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Sort;
+
 @Service
 public class ResenaService {
     private final ResenaRepository resenaRepository;
@@ -62,12 +64,31 @@ public class ResenaService {
     }
 
     @Transactional(readOnly = true)
-    public List<ServicioCatalogo> listarCatalogo(String nombreUsuario) {
-        Long usuarioId = nombreUsuario == null ? null : usuarioRepository.findByNombre(nombreUsuario)
-            .map(Usuario::getId).orElse(null);
-        List<Servicio> servicios = servicioRepository.findAll();
-        if (servicios.isEmpty()) return List.of();
+    public List<ServicioCatalogo> listarCatalogo(
+            String nombreUsuario,
+            String orden) {
 
+        Long usuarioId = nombreUsuario == null
+            ? null
+            : usuarioRepository.findByNombre(nombreUsuario)
+                .map(Usuario::getId)
+                .orElse(null);
+
+        List<Servicio> servicios;
+
+        if ("asc".equals(orden)) {
+            servicios = servicioRepository.findAll(
+                Sort.by("precio").ascending()
+            );
+        } else if ("desc".equals(orden)) {
+            servicios = servicioRepository.findAll(
+                Sort.by("precio").descending()
+            );
+        } else {
+            servicios = servicioRepository.findAll();
+        }
+
+        if (servicios.isEmpty()) return List.of();
         // Una sola consulta de reseñas para todo el catálogo.
         Map<Long, List<Resena>> porServicio = resenaRepository
             .findByServicioIdInOrderByFechaDescIdDesc(servicios.stream().map(Servicio::getId).toList())
