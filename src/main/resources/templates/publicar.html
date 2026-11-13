@@ -330,9 +330,26 @@
             </div>
 
             <div class="grupo-formulario">
-                <label for="descripcion">Descripción corta (máximo 100 caracteres)</label>
-                <input type="text" id="descripcion" name="descripcion" placeholder="Resumen breve de lo que ofreces..."
-                       th:value="${servicio != null ? servicio.descripcion : ''}" maxlength="100" required>
+                <label for="descripcion">
+                    Descripción corta (máximo 100 caracteres)
+                </label>
+
+                <input
+                    type="text"
+                    id="descripcion"
+                    name="descripcion"
+                    placeholder="Resumen breve de lo que ofreces..."
+                    maxlength="100"
+                    required
+                    oninput="actualizarContador(this)"
+                >
+
+                <small
+                    id="contador"
+                    style="color: var(--gris); display: block; margin-top: 5px; font-size: 12px;"
+                >
+                    100 caracteres restantes
+                </small>
             </div>
 
             <div class="grupo-formulario">
@@ -404,6 +421,22 @@
                 this.value = valor.toFixed(2);
             }
         });
+        function actualizarContador(input) {
+            const max = input.getAttribute('maxlength');
+            const actual = input.value.length;
+            const restantes = max - actual;
+
+            const elementoContador = document.getElementById('contador');
+
+            elementoContador.textContent = restantes + ' caracteres restantes';
+
+            if (restantes <= 10) {
+                elementoContador.style.color = 'var(--error)';
+            } else {
+                elementoContador.style.color = 'var(--gris)';
+            }
+        }
+
     </script>
 </body>
 </html>

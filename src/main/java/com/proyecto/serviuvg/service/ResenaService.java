@@ -33,6 +33,7 @@ public class ResenaService {
     }
 
     @Transactional
+    
     public void calificar(Long servicioId, String nombreUsuario, Integer estrellas, String comentario) {
         if (nombreUsuario == null || nombreUsuario.isBlank()) {
             throw new IllegalArgumentException("Iniciá sesión para calificar un servicio.");
